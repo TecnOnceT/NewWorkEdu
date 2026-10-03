@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Səhifəsi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="login-card">
+		<!-- LOGO BÖLÜMÜ -->
+		<div class="logo-container">
+			<img src="OCKER2.png" height="120">
+			<div class="logo-text">Portal</div>
+		</div>
+
+		<h2>Sistemə Giriş</h2>
+		...
+        
+        <div class="input-group">
+            <label for="username">İstifadəçi adı</label>
+            <input type="text" id="username" placeholder="Məs: ali">
+        </div>
+
+        <div class="input-group">
+            <label for="password">Şifrə</label>
+            <input type="password" id="password" placeholder="Məs: 123">
+        </div>
+
+        <button class="btn-primary" onclick="login()">Giriş Et</button>
+        <p id="error-msg" class="error-msg"></p>
+    </div>
+
+    <script>
+        // 1. SƏHİFƏ AÇILANDA KÖHNƏ SESSİYANI SİLİRİK
+        // Bu addım sizi avtomatik portala atmağın qarşısını alır!
+        localStorage.removeItem("currentUser");
+
+        const users = [
+            { username: "NurgunF", password: "N6gunTVT23" },
+            { username: "SenanPS", password: "Sena4nCatssep" },
+            { username: "NermenSD", password: "Nerm3nOP90" },
+            { username: "Ayseen", password: "Ays4nPreps132" },
+            { username: "Ulvid", password: "Ulv3Braku1378" },
+			{ username: "Aytac0", password: "Ayt4cJUKte34" },
+            { username: "T0T", password: "T0T" }
+			
+        ];
+
+        function login() {
+            const userInput = document.getElementById("username").value.trim();
+            const passInput = document.getElementById("password").value.trim();
+            const errorMsg = document.getElementById("error-msg");
+
+            const foundUser = users.find(u => u.username === userInput && u.password === passInput);
+
+            if (foundUser) {
+                // Giriş uğurludursa yeni istifadəçini yazırıq
+                localStorage.setItem("currentUser", foundUser.username);
+                // İndi təhlükəsiz şəkildə portala keçirik
+                window.location.href = "index.html";
+            } else {
+                errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dərslik Portalı</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- SAYTIN YUXARI LOQOSU VƏ İSTİFADƏÇİ PANALİ -->
+        <header>
+            <div class="logo-container" style="margin-bottom: 0;">
+                <!-- 'my-logo.png' yerinə öz loqo şəklinin adını yaza bilərsən -->
+                <img src="my-logo.png" alt="Logo" class="logo-img">
+                <div class="logo-text">EduPortal</div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h1 style="font-size: 18px; font-weight: 500;">
+                    Xoş gəldin, <span id="user-display" style="color:#fca5a5; font-weight: 700;"></span>! 👋
+                </h1>
+                <button class="btn-danger" onclick="logout()">Çıxış Et</button>
+            </div>
+        </header>
+
+        <h2 style="margin-bottom: 24px; color: #ffffff; font-weight: 600;">Dərslikləriniz:</h2>
+        
+        <!-- DƏRSLİK KARTLARI -->
+        <div class="courses-grid">
+            <div class="course-card">
+                <h3>HTML Dərsləri</h3>
+                <p>Veb səhifələrin iskeletini qurmağı öyrənin.</p>
+            </div>
+
+            <div class="course-card">
+                <h3>CSS Dərsləri</h3>
+                <p>Səhifələrə dizayn, rəng və stillər verin.</p>
+            </div>
+
+            <div class="course-card">
+                <h3>JavaScript Dərsləri</h3>
+                <p>Səhifələri interaktiv və dinamik edin.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Səhifə yüklənəndə girişin olunub-olunmadığını yoxlayırıq
+        window.addEventListener("DOMContentLoaded", function() {
+            const currentUser = localStorage.getItem("currentUser");
+
+            if (!currentUser) {
+                // Əgər giriş edilməyibsə, birbaşa login.html səhifəsinə yönləndirir
+                window.location.href = "login.html";
+            } else {
+                // Giriş edilibsə, istifadəçi adını ekranda göstərir
+                document.getElementById("user-display").textContent = currentUser;
+            }
+        });
+
+        function logout() {
+            // Yaddaşı təmizləyib giriş səhifəsinə qaytarır
+            localStorage.removeItem("currentUser");
+            window.location.href = "login.html";
+        }
+    </script>
+
+</body>
+</html>
