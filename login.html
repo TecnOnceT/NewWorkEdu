@@ -7,6 +7,85 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div class="login-card">
+        <!-- LOGO BÖLÜMÜ -->
+        <div class="logo-container">
+            <img src="OCKER2.png" alt="Logo" class="logo-img">
+            <div class="logo-text">Portal</div>
+        </div>
+
+        <h2>Sistemə Giriş</h2>
+
+        <!-- FORM İNPUTLARI -->
+        <div class="input-group">
+            <label for="username">İstifadəçi adı</label>
+            <input type="text" id="username" placeholder="Məs: NurgunF" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <label for="password">Şifrə</label>
+            <input type="password" id="password" placeholder="Şifrənizi daxil edin">
+        </div>
+
+        <button class="btn-primary" onclick="login()">Giriş Et</button>
+        <p id="error-msg" class="error-msg"></p>
+    </div>
+
+    <script>
+        // Səhifə açılan kimi köhnə giriş sessiyasını silirik
+        localStorage.removeItem("currentUser");
+
+        async function login() {
+            const userInput = document.getElementById("username").value.trim();
+            const passInput = document.getElementById("password").value.trim();
+            const errorMsg = document.getElementById("error-msg");
+
+            if (!userInput || !passInput) {
+                errorMsg.textContent = "Zəhmət olmasa bütün xanaları doldurun!";
+                return;
+            }
+
+            errorMsg.textContent = "Yoxlanılır...";
+
+            try {
+                // Şifrə yoxlaması brauzerdə YOX, serverdə gedir (Heç bir şifrə F12-də görünmür)
+                const response = await fetch("http://localhost:3000/api/login", {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json" 
+                    },
+                    body: JSON.stringify({ 
+                        username: userInput, 
+                        password: passInput 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Giriş uğurludursa istifadəçi adını sessiyaya yazıb dərsliklərə keçirik
+                    localStorage.setItem("currentUser", data.username);
+                    window.location.href = "index.html";
+                } else {
+                    errorMsg.textContent = data.message || "İstifadəçi adı və ya şifrə yanlışdır!";
+                }
+            } catch (err) {
+                errorMsg.textContent = "Serverlə əlaqə qurulmadı! Serverin işlədiyindən əmin olun.";
+            }
+        }
+    </script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Səhifəsi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
     <div class="login-card">
         <div class="logo-container">
             <img src="OCKER2.png" height="120">
