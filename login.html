@@ -31,39 +31,43 @@
         <p id="error-msg" class="error-msg"></p>
     </div>
 
-    <script>
-        // 1. SƏHİFƏ AÇILANDA KÖHNƏ SESSİYANI SİLİRİK
-        // Bu addım sizi avtomatik portala atmağın qarşısını alır!
-        localStorage.removeItem("currentUser");
-
-        const users = [
-            { username: "NurgunF", password: "N6gunTVT23" },
-            { username: "SenanPS", password: "Sena4nCatssep" },
-            { username: "NermenSD", password: "Nerm3nOP90" },
-            { username: "Ayseen", password: "Ays4nPreps132" },
-            { username: "Ulvid", password: "Ulv3Braku1378" },
-			{ username: "Aytac0", password: "Ayt4cJUKte34" },
-            { username: "T0T", password: "T0T" }
-			
-        ];
-
-        function login() {
-            const userInput = document.getElementById("username").value.trim();
-            const passInput = document.getElementById("password").value.trim();
-            const errorMsg = document.getElementById("error-msg");
-
-            const foundUser = users.find(u => u.username === userInput && u.password === passInput);
-
-            if (foundUser) {
-                // Giriş uğurludursa yeni istifadəçini yazırıq
-                localStorage.setItem("currentUser", foundUser.username);
-                // İndi təhlükəsiz şəkildə portala keçirik
-                window.location.href = "index.html";
-            } else {
-                errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
-            }
-        }
-    </script>
+	<script>
+	    // 1. Səhifə açılanda aktiv sessiyanı sıfırlayırıq
+	    localStorage.removeItem("currentUser");
+	
+	    // 2. Əgər brauzerdə istifadəçi siyahısı yoxdursa, ilkin test istifadəçilərini yaradırıq.
+	    // Məlumatlar JS kodunda yox, yerli yaddaşda saxlanılacaq.
+	    if (!localStorage.getItem("siteUsers")) {
+	        const initialUsers = [
+	            { username: "NurgunF", password: "N6gunTVT23" },
+	            { username: "SenanPS", password: "Sena4nCatssep" },
+	            { username: "NermenSD", password: "Nerm3nOP90" },
+	            { username: "Ayseen", password: "Ays4nPreps132" },
+	            { username: "Ulvid", password: "Ulv3Braku1378" },
+	            { username: "Aytac0", password: "Ayt4cJUKte34" },
+	            { username: "T0T", password: "T0T" }
+	        ];
+	        localStorage.setItem("siteUsers", JSON.stringify(initialUsers));
+	    }
+	
+	    function login() {
+	        const userInput = document.getElementById("username").value.trim();
+	        const passInput = document.getElementById("password").value.trim();
+	        const errorMsg = document.getElementById("error-msg");
+	
+	        // İstifadəçi siyahısını fayldan yox, yerli yaddaşdan çəkirik
+	        const users = JSON.parse(localStorage.getItem("siteUsers")) || [];
+	
+	        const foundUser = users.find(u => u.username === userInput && u.password === passInput);
+	
+	        if (foundUser) {
+	            localStorage.setItem("currentUser", foundUser.username);
+	            window.location.href = "index.html";
+	        } else {
+	            errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
+	        }
+	    }
+	</script>
 
 </body>
 </html>
