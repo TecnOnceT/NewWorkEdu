@@ -1,5 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+    getFirestore, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    onSnapshot, 
+    collection 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDzfpUCfUJd4VNR_UfrR3BhQ8ZCV5jZsP8",
@@ -13,10 +21,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const TEACHER_USERNAME = "tecn0ncet";
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
     const currentUser = localStorage.getItem("currentUser");
 
     if (!currentUser) {
@@ -25,223 +34,164 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     document.getElementById("user-display").textContent = currentUser;
-
     const isTeacher = (currentUser.trim().toLowerCase() === TEACHER_USERNAME.trim().toLowerCase());
-
-    let portalData = JSON.parse(localStorage.getItem("portalData")) || {
-        lessonActive: false,
-        pdfUrl: "cpp.pdf",
-        registeredStudents: [],
-        grades: {}
-    };
-
-    // Tələbə daxil olubsa, onu siyahıya əlavə edirik
-    if (!isTeacher) {
-        if (!portalData.registeredStudents.includes(currentUser)) {
-            portalData.registeredStudents.push(currentUser);
-        }
-        if (!portalData.grades[currentUser]) {
-            portalData.grades[currentUser] = { lesson1: "-", lesson2: "-" };
-        }
-    }
-
-    // Müəllim adını tələbələr siyahısından tamamilə kənarlaşdırırıq
-    portalData.registeredStudents = portalData.registeredStudents.filter(
-        st => st.trim().toLowerCase() !== TEACHER_USERNAME.trim().toLowerCase()
-    );
-
-    localStorage.setItem("portalData", JSON.stringify(portalData));
 
     if (isTeacher) {
         document.getElementById("role-badge").textContent = "(Məllim)";
         document.getElementById("teacher-panel").style.display = "block";
-        renderTeacherPanel();
+        listenStudentsRealtime();
     } else {
         document.getElementById("role-badge").textContent = "(Tələbə)";
+        await registerStudentToFirebase(currentUser);
     }
 
-    renderCourses(currentUser, isTeacher);
+    // Kod Laboratoriyasını aktivləşdiririk
+    initCodePlayground();
 
-    // Çıxış düyməsi event listener-i
+    // Çıxış Düyməsi
     const logoutBtn = document.getElementById("logout-btn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", logout);
     }
 });
 
-function renderTeacherPanel() {
-    const data = JSON.parse(localStorage.getItem("portalData")) || { registeredStudents: [], grades: {} };
-    const tbody = document.getElementById("student-list");
-    tbody.innerHTML = "";
+// 1. HTML/CSS Canlı Önizləmə (Playground) Funksiyası
+function initCodePlayground() {
+    const htmlCode = document.getElementById("html-code");
+    const cssCode = document.getElementById("css-code");
+    const preview = document.getElementById("code-preview");
 
-    const studentsOnly = data.registeredStudents.filter(
-        st => st.trim().toLowerCase() !== TEACHER_USERNAME.toLowerCase()
-    );
+    function updatePreview() {
+        const html = htmlCode.value;
+        const css = `<style>${cssCode.value}</style>`;
+        const content = html + css;
 
-    if (studentsOnly.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Hələ heç bir tələbə daxil olmayıb.</td></tr>`;
-        return;
+        const accessDoc = preview.contentDocument || preview.contentWindow.document;
+        accessDoc.open();
+        accessDoc.write(content);
+        accessDoc.close();
     }
 
-    studentsOnly.forEach(student => {
-        const tr = document.createElement("tr");
-        const studentGrades = data.grades[student] || { lesson1: "-", lesson2: "-" };
+    htmlCode.addEventListener("input", updatePreview);
+    cssCode.addEventListener("input", updatePreview);
+}
 
-        // 1. Tələbə Adı (XSS müdafiəsi üçün textContent)
-        const tdStudent = document.createElement("td");
-        const bStudent = document.createElement("b");
-        bStudent.textContent = student; 
-        tdStudent.appendChild(bStudent);
+// 2. Tələbəni Firebase Firestore-a Qeyd Etmək
+async function registerStudentToFirebase(username) {
+    const studentRef = doc(db, "students", username);
+    const studentSnap = await getDoc(studentRef);
 
-        // 2. Dərs Statusu Düyməsi
-        const tdStatus = document.createElement("td");
-        const btnToggle = document.createElement("button");
-        btnToggle.className = `btn-toggle ${data.lessonActive ? 'btn-active' : 'btn-passive'}`;
-        btnToggle.textContent = data.lessonActive ? 'Aktivdir' : 'Deaktivdir';
-        btnToggle.addEventListener("click", toggleLesson);
-        tdStatus.appendChild(btnToggle);
+    if (!studentSnap.exists()) {
+        await setDoc(studentRef, {
+            username: username,
+            grades: { lesson1: "-", lesson2: "-", lesson3: "-" },
+            createdAt: new Date()
+        });
+    }
+}
 
-        // 3. 1-ci Dərs Qiyməti Xanası
-        const tdG1 = document.createElement("td");
-        const inputG1 = document.createElement("input");
-        inputG1.type = "text";
-        inputG1.className = "grade-input";
-        inputG1.value = studentGrades.lesson1;
-        inputG1.id = `g1-${student}`;
-        tdG1.appendChild(inputG1);
+// 3. Müəllim Paneli: Tələbələri Canlı Rejimdə (Firebase-dən) Oxumaq
+function listenStudentsRealtime() {
+    const studentsCol = collection(db, "students");
 
-        // 4. 2-ci Dərs Qiyməti Xanası
-        const tdG2 = document.createElement("td");
-        const inputG2 = document.createElement("input");
-        inputG2.type = "text";
-        inputG2.className = "grade-input";
-        inputG2.value = studentGrades.lesson2;
-        inputG2.id = `g2-${student}`;
-        tdG2.appendChild(inputG2);
+    onSnapshot(studentsCol, (snapshot) => {
+        const tbody = document.getElementById("student-list");
+        tbody.innerHTML = "";
 
-        // 5. Yadda Saqla Düyməsi
-        const tdSave = document.createElement("td");
-        const btnSave = document.createElement("button");
-        btnSave.className = "btn-danger";
-        btnSave.style.padding = "4px 10px";
-        btnSave.textContent = "Yadda Saqla";
-        btnSave.addEventListener("click", () => saveGrade(student));
-        tdSave.appendChild(btnSave);
+        const students = [];
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data.username && data.username.trim().toLowerCase() !== TEACHER_USERNAME.toLowerCase()) {
+                students.push(data);
+            }
+        });
 
-        // Bütün xanaları sətirə əlavə edirik
-        tr.appendChild(tdStudent);
-        tr.appendChild(tdStatus);
-        tr.appendChild(tdG1);
-        tr.appendChild(tdG2);
-        tr.appendChild(tdSave);
+        if (students.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Hələ heç bir tələbə sistemə daxil olmayıb.</td></tr>`;
+            return;
+        }
 
-        tbody.appendChild(tr);
+        getDoc(doc(db, "settings", "portal")).then(settingsSnap => {
+            const lessonActive = settingsSnap.exists() ? settingsSnap.data().lessonActive : false;
+
+            students.forEach(studentData => {
+                const student = studentData.username;
+                const studentGrades = studentData.grades || { lesson1: "-", lesson2: "-", lesson3: "-" };
+
+                const tr = document.createElement("tr");
+
+                // Tələbə Adı
+                const tdStudent = document.createElement("td");
+                const bStudent = document.createElement("b");
+                bStudent.textContent = student;
+                tdStudent.appendChild(bStudent);
+
+                // Dərs Statusu
+                const tdStatus = document.createElement("td");
+                const btnToggle = document.createElement("button");
+                btnToggle.className = `btn-toggle ${lessonActive ? 'btn-active' : 'btn-passive'}`;
+                btnToggle.textContent = lessonActive ? 'Aktivdir' : 'Deaktivdir';
+                btnToggle.addEventListener("click", () => toggleLesson(!lessonActive));
+                tdStatus.appendChild(btnToggle);
+
+                // Dərs 1
+                const tdG1 = createGradeInput(`g1-${student}`, studentGrades.lesson1);
+                // Dərs 2
+                const tdG2 = createGradeInput(`g2-${student}`, studentGrades.lesson2);
+                // Dərs 3
+                const tdG3 = createGradeInput(`g3-${student}`, studentGrades.lesson3);
+
+                // Yadda Saqla Düyməsi
+                const tdSave = document.createElement("td");
+                const btnSave = document.createElement("button");
+                btnSave.className = "btn-danger";
+                btnSave.style.padding = "4px 10px";
+                btnSave.textContent = "Yadda Saqla";
+                btnSave.addEventListener("click", () => saveGrade(student));
+                tdSave.appendChild(btnSave);
+
+                tr.appendChild(tdStudent);
+                tr.appendChild(tdStatus);
+                tr.appendChild(tdG1);
+                tr.appendChild(tdG2);
+                tr.appendChild(tdG3);
+                tr.appendChild(tdSave);
+
+                tbody.appendChild(tr);
+            });
+        });
     });
 }
 
-function toggleLesson() {
-    let data = JSON.parse(localStorage.getItem("portalData"));
-    data.lessonActive = !data.lessonActive;
-    localStorage.setItem("portalData", JSON.stringify(data));
-    location.reload();
+function createGradeInput(id, value) {
+    const td = document.createElement("td");
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "grade-input";
+    input.value = value || "-";
+    input.id = id;
+    td.appendChild(input);
+    return td;
 }
 
-function saveGrade(student) {
-    let data = JSON.parse(localStorage.getItem("portalData"));
+// Dərs Statusunu Dəyişmək
+async function toggleLesson(newState) {
+    const settingsRef = doc(db, "settings", "portal");
+    await setDoc(settingsRef, { lessonActive: newState }, { merge: true });
+}
+
+// Qiyməti Yadda Saxlamaq
+async function saveGrade(student) {
     const g1 = document.getElementById(`g1-${student}`).value;
     const g2 = document.getElementById(`g2-${student}`).value;
+    const g3 = document.getElementById(`g3-${student}`).value;
 
-    if (!data.grades[student]) data.grades[student] = {};
-    data.grades[student].lesson1 = g1;
-    data.grades[student].lesson2 = g2;
+    const studentRef = doc(db, "students", student);
+    await setDoc(studentRef, {
+        grades: { lesson1: g1, lesson2: g2, lesson3: g3 }
+    }, { merge: true });
 
-    localStorage.setItem("portalData", JSON.stringify(data));
-    alert(`${student} üçün qiymətlər yadda saxlanıldı!`);
-    location.reload();
-}
-
-function renderCourses(username, isTeacher) {
-    const data = JSON.parse(localStorage.getItem("portalData")) || {};
-    const container = document.getElementById("courses-container");
-    const myGrades = (data.grades && data.grades[username]) ? data.grades[username] : { lesson1: "-", lesson2: "-" };
-
-    container.innerHTML = "";
-
-    if (data.lessonActive || isTeacher) {
-        // 1-ci Dərs Kartı
-        const card1 = document.createElement("div");
-        card1.className = "course-card";
-
-        const h3_1 = document.createElement("h3");
-        h3_1.textContent = "HTML 1-ci Dərs";
-        card1.appendChild(h3_1);
-
-        const p1 = document.createElement("p");
-        p1.textContent = "Dərs materialını aşağıdakı düymədən yükləyə bilərsiniz.";
-        card1.appendChild(p1);
-
-        if (!isTeacher) {
-            const pGrade1 = document.createElement("p");
-            pGrade1.style.marginTop = "10px";
-            pGrade1.innerHTML = "<b>Qiymətiniz:</b> ";
-            
-            const gradeSpan1 = document.createElement("span");
-            gradeSpan1.textContent = myGrades.lesson1;
-            pGrade1.appendChild(gradeSpan1);
-            
-            card1.appendChild(pGrade1);
-        }
-
-        const btnDownload = document.createElement("a");
-        btnDownload.href = data.pdfUrl || "#";
-        btnDownload.download = "";
-        btnDownload.className = "btn-download";
-        btnDownload.textContent = "PDF Yüklə";
-        card1.appendChild(btnDownload);
-
-        // 2-ci Dərs Kartı
-        const card2 = document.createElement("div");
-        card2.className = "course-card";
-
-        const h3_2 = document.createElement("h3");
-        h3_2.textContent = "HTML 2-ci Dərs";
-        card2.appendChild(h3_2);
-
-        const p2 = document.createElement("p");
-        p2.textContent = "Dərs materialı hazırlıq mərhələsindədir.";
-        card2.appendChild(p2);
-
-        if (!isTeacher) {
-            const pGrade2 = document.createElement("p");
-            pGrade2.style.marginTop = "10px";
-            pGrade2.innerHTML = "<b>Qiymətiniz:</b> ";
-
-            const gradeSpan2 = document.createElement("span");
-            gradeSpan2.textContent = myGrades.lesson2;
-            pGrade2.appendChild(gradeSpan2);
-
-            card2.appendChild(pGrade2);
-        }
-
-        container.appendChild(card1);
-        container.appendChild(card2);
-
-    } else {
-        // Passiv Halı üçün Kart
-        const cardPassive = document.createElement("div");
-        cardPassive.className = "course-card";
-
-        const h3 = document.createElement("h3");
-        h3.textContent = "HTML Dərsləri";
-        cardPassive.appendChild(h3);
-
-        const p = document.createElement("p");
-        p.style.color = "#86efac";
-        p.textContent = "Hələ Məllim Tərəfindən Aktiv Edilməyib!";
-        cardPassive.appendChild(p);
-
-        container.appendChild(cardPassive);
-    }
+    alert(`${student} üçün Dərs 1, 2 və 3 qiymətləri yadda saxlanıldı!`);
 }
 
 function logout() {
