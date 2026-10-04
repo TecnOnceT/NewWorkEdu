@@ -31,6 +31,7 @@
     </div>
     <script type="module">
 		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+		import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js"; // <-- BU SATIRI EKLE
 		import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 		const firebaseConfig = {
 		  apiKey: "AIzaSyDzfpUCfUJd4VNR_UfrR3BhQ8ZCV5jZsP8",
@@ -42,7 +43,6 @@
 		  measurementId: "G-RKRB3JEJ4G"
 		};
 		const app = initializeApp(firebaseConfig);
-		const analytics = getAnalytics(app);
 
         // Eski oturumu temizliyoruz
         localStorage.removeItem("currentUser");
