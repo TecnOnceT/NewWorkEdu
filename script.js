@@ -1,4 +1,5 @@
 const TEACHER_USERNAME = "tecn0ncet";
+
 document.addEventListener("DOMContentLoaded", function() {
     const currentUser = localStorage.getItem("currentUser");
 
@@ -9,14 +10,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.getElementById("user-display").textContent = currentUser;
 
+    const isTeacher = (currentUser.trim().toLowerCase() === TEACHER_USERNAME.trim().toLowerCase());
+
     let portalData = JSON.parse(localStorage.getItem("portalData")) || {
         lessonActive: false,
-        pdfUrl: "ders1.pdf",
+        pdfUrl: "pdfs/ders1.pdf",
         registeredStudents: [],
         grades: {}
     };
-
-    const isTeacher = (currentUser.trim().toLowerCase() === TEACHER_USERNAME.trim().toLowerCase());
 
     if (!isTeacher) {
         if (!portalData.registeredStudents.includes(currentUser)) {
@@ -25,9 +26,15 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!portalData.grades[currentUser]) {
             portalData.grades[currentUser] = { lesson1: "-", lesson2: "-" };
         }
-        localStorage.setItem("portalData", JSON.stringify(portalData));
     }
 
+    portalData.registeredStudents = portalData.registeredStudents.filter(
+        st => st.trim().toLowerCase() !== TEACHER_USERNAME.trim().toLowerCase()
+    );
+
+    localStorage.setItem("portalData", JSON.stringify(portalData));
+
+    // Rol təyini və panel görüntüsü
     if (isTeacher) {
         document.getElementById("role-badge").textContent = "(Məllim)";
         document.getElementById("teacher-panel").style.display = "block";
@@ -44,12 +51,16 @@ function renderTeacherPanel() {
     const tbody = document.getElementById("student-list");
     tbody.innerHTML = "";
 
-    if (data.registeredStudents.length === 0) {
+    const studentsOnly = data.registeredStudents.filter(
+        st => st.trim().toLowerCase() !== TEACHER_USERNAME.trim().toLowerCase()
+    );
+
+    if (studentsOnly.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Hələ heç bir tələbə daxil olmayıb.</td></tr>`;
         return;
     }
 
-    data.registeredStudents.forEach(student => {
+    studentsOnly.forEach(student => {
         const tr = document.createElement("tr");
         const studentGrades = data.grades[student] || { lesson1: "-", lesson2: "-" };
 
@@ -114,7 +125,7 @@ function renderCourses(username, isTeacher) {
         html = `
             <div class="course-card">
                 <h3>HTML Dərsləri</h3>
-                <p style="color: #fca5a5;">Hələ Məllim Tərəfindən Aktiv Edilməyib!</p>
+                <p style="color: #86efac;">Hələ Məllim Tərəfindən Aktiv Edilməyib!</p>
             </div>
         `;
     }
