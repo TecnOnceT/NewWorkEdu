@@ -165,32 +165,83 @@ function renderCourses(username, isTeacher) {
     const container = document.getElementById("courses-container");
     const myGrades = (data.grades && data.grades[username]) ? data.grades[username] : { lesson1: "-", lesson2: "-" };
 
-    let html = "";
+    container.innerHTML = "";
 
     if (data.lessonActive || isTeacher) {
-        html = `
-            <div class="course-card">
-                <h3>HTML 1-ci Dərs</h3>
-                <p>Dərs materialını aşağıdakı düymədən yükləyə bilərsiniz.</p>
-                ${!isTeacher ? `<p style="margin-top:10px;"><b>Qiymətiniz:</b> ${myGrades.lesson1}</p>` : ''}
-                <a href="${data.pdfUrl || '#'}" download class="btn-download">PDF Yüklə</a>
-            </div>
-            <div class="course-card">
-                <h3>HTML 2-ci Dərs</h3>
-                <p>Dərs materialı hazırlıq mərhələsindədir.</p>
-                ${!isTeacher ? `<p style="margin-top:10px;"><b>Qiymətiniz:</b> ${myGrades.lesson2}</p>` : ''}
-            </div>
-        `;
-    } else {
-        html = `
-            <div class="course-card">
-                <h3>HTML Dərsləri</h3>
-                <p style="color: #86efac;">Hələ Məllim Tərəfindən Aktiv Edilməyib!</p>
-            </div>
-        `;
-    }
+        // 1-ci Dərs Kartı
+        const card1 = document.createElement("div");
+        card1.className = "course-card";
 
-    container.innerHTML = html;
+        const h3_1 = document.createElement("h3");
+        h3_1.textContent = "HTML 1-ci Dərs";
+        card1.appendChild(h3_1);
+
+        const p1 = document.createElement("p");
+        p1.textContent = "Dərs materialını aşağıdakı düymədən yükləyə bilərsiniz.";
+        card1.appendChild(p1);
+
+        if (!isTeacher) {
+            const pGrade1 = document.createElement("p");
+            pGrade1.style.marginTop = "10px";
+            pGrade1.innerHTML = "<b>Qiymətiniz:</b> ";
+            
+            const gradeSpan1 = document.createElement("span");
+            gradeSpan1.textContent = myGrades.lesson1;
+            pGrade1.appendChild(gradeSpan1);
+            
+            card1.appendChild(pGrade1);
+        }
+
+        const btnDownload = document.createElement("a");
+        btnDownload.href = data.pdfUrl || "#";
+        btnDownload.download = "";
+        btnDownload.className = "btn-download";
+        btnDownload.textContent = "PDF Yüklə";
+        card1.appendChild(btnDownload);
+
+        // 2-ci Dərs Kartı
+        const card2 = document.createElement("div");
+        card2.className = "course-card";
+
+        const h3_2 = document.createElement("h3");
+        h3_2.textContent = "HTML 2-ci Dərs";
+        card2.appendChild(h3_2);
+
+        const p2 = document.createElement("p");
+        p2.textContent = "Dərs materialı hazırlıq mərhələsindədir.";
+        card2.appendChild(p2);
+
+        if (!isTeacher) {
+            const pGrade2 = document.createElement("p");
+            pGrade2.style.marginTop = "10px";
+            pGrade2.innerHTML = "<b>Qiymətiniz:</b> ";
+
+            const gradeSpan2 = document.createElement("span");
+            gradeSpan2.textContent = myGrades.lesson2;
+            pGrade2.appendChild(gradeSpan2);
+
+            card2.appendChild(pGrade2);
+        }
+
+        container.appendChild(card1);
+        container.appendChild(card2);
+
+    } else {
+        // Passiv Halı üçün Kart
+        const cardPassive = document.createElement("div");
+        cardPassive.className = "course-card";
+
+        const h3 = document.createElement("h3");
+        h3.textContent = "HTML Dərsləri";
+        cardPassive.appendChild(h3);
+
+        const p = document.createElement("p");
+        p.style.color = "#86efac";
+        p.textContent = "Hələ Məllim Tərəfindən Aktiv Edilməyib!";
+        cardPassive.appendChild(p);
+
+        container.appendChild(cardPassive);
+    }
 }
 
 function logout() {
