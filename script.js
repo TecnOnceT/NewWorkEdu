@@ -75,7 +75,7 @@ function renderTeacherPanel() {
     tbody.innerHTML = "";
 
     const studentsOnly = data.registeredStudents.filter(
-        st => st.trim().toLowerCase() !== TEACHER_USERNAME.trim().toLowerCase()
+        st => st.trim().toLowerCase() !== TEACHER_USERNAME.toLowerCase()
     );
 
     if (studentsOnly.length === 0) {
@@ -87,30 +87,55 @@ function renderTeacherPanel() {
         const tr = document.createElement("tr");
         const studentGrades = data.grades[student] || { lesson1: "-", lesson2: "-" };
 
-        tr.innerHTML = `
-            <td><b>${student}</b></td>
-            <td>
-                <button class="btn-toggle ${data.lessonActive ? 'btn-active' : 'btn-passive'}" data-action="toggle">
-                    ${data.lessonActive ? 'Aktivdir' : 'Deaktivdir'}
-                </button>
-            </td>
-            <td><input type="text" class="grade-input" value="${studentGrades.lesson1}" id="g1-${student}"></td>
-            <td><input type="text" class="grade-input" value="${studentGrades.lesson2}" id="g2-${student}"></td>
-            <td><button class="btn-danger" style="padding: 4px 10px;" data-action="save" data-student="${student}">Yadda Saqla</button></td>
-        `;
+        // 1. Tələbə Adı (XSS müdafiəsi üçün textContent istifadə edirik)
+        const tdStudent = document.createElement("td");
+        const bStudent = document.createElement("b");
+        bStudent.textContent = student; 
+        tdStudent.appendChild(bStudent);
+
+        // 2. Dərs Statusu Düyməsi
+        const tdStatus = document.createElement("td");
+        const btnToggle = document.createElement("button");
+        btnToggle.className = `btn-toggle ${data.lessonActive ? 'btn-active' : 'btn-passive'}`;
+        btnToggle.textContent = data.lessonActive ? 'Aktivdir' : 'Deaktivdir';
+        btnToggle.addEventListener("click", toggleLesson);
+        tdStatus.appendChild(btnToggle);
+
+        // 3. 1-ci Dərs Qiyməti Xanası
+        const tdG1 = document.createElement("td");
+        const inputG1 = document.createElement("input");
+        inputG1.type = "text";
+        inputG1.className = "grade-input";
+        inputG1.value = studentGrades.lesson1;
+        inputG1.id = `g1-${student}`;
+        tdG1.appendChild(inputG1);
+
+        // 4. 2-ci Dərs Qiyməti Xanası
+        const tdG2 = document.createElement("td");
+        const inputG2 = document.createElement("input");
+        inputG2.type = "text";
+        inputG2.className = "grade-input";
+        inputG2.value = studentGrades.lesson2;
+        inputG2.id = `g2-${student}`;
+        tdG2.appendChild(inputG2);
+
+        // 5. Yadda Saqla Düyməsi
+        const tdSave = document.createElement("td");
+        const btnSave = document.createElement("button");
+        btnSave.className = "btn-danger";
+        btnSave.style.padding = "4px 10px";
+        btnSave.textContent = "Yadda Saqla";
+        btnSave.addEventListener("click", () => saveGrade(student));
+        tdSave.appendChild(btnSave);
+
+        // Bütün xanaları sətirə əlavə edirik
+        tr.appendChild(tdStudent);
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdG1);
+        tr.appendChild(tdG2);
+        tr.appendChild(tdSave);
+
         tbody.appendChild(tr);
-    });
-
-    // Cədvəldəki düymələrə click hadisələrinin bağlanması
-    tbody.querySelectorAll('button[data-action="toggle"]').forEach(btn => {
-        btn.addEventListener('click', toggleLesson);
-    });
-
-    tbody.querySelectorAll('button[data-action="save"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const student = e.target.getAttribute('data-student');
-            saveGrade(student);
-        });
     });
 }
 
