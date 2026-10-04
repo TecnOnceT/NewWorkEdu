@@ -18,7 +18,7 @@
         
         <div class="input-group">
             <label for="username">İstifadəçi adı</label>
-            <input type="text" id="username" placeholder="Məs: NurgunF" autocomplete="off">
+            <input type="text" id="username" placeholder="Məs: Smbdy" autocomplete="off">
         </div>
 
         <div class="input-group">
@@ -29,20 +29,26 @@
         <button class="btn-primary" id="login-btn">Giriş Et</button>
         <p id="error-msg" class="error-msg"></p>
     </div>
+
     <script type="module">
-		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-		import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js"; // <-- BU SATIRI EKLE
-		import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-		const firebaseConfig = {
-		  apiKey: "AIzaSyDzfpUCfUJd4VNR_UfrR3BhQ8ZCV5jZsP8",
-		  authDomain: "neworkaccountprojet.firebaseapp.com",
-		  projectId: "neworkaccountprojet",
-		  storageBucket: "neworkaccountprojet.firebasestorage.app",
-		  messagingSenderId: "962982050109",
-		  appId: "1:962982050109:web:6886bb8c095a6f28a16d54",
-		  measurementId: "G-RKRB3JEJ4G"
-		};
-		const app = initializeApp(firebaseConfig);
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDzfpUCfUJd4VNR_UfrR3BhQ8ZCV5jZsP8",
+          authDomain: "neworkaccountprojet.firebaseapp.com",
+          projectId: "neworkaccountprojet",
+          storageBucket: "neworkaccountprojet.firebasestorage.app",
+          messagingSenderId: "962982050109",
+          appId: "1:962982050109:web:6886bb8c095a6f28a16d54",
+          measurementId: "G-RKRB3JEJ4G"
+        };
+
+        // Firebase uygulamasını başlatıyoruz
+        const app = initializeApp(firebaseConfig);
+
+        // HATA BURADAYDI: "auth" değişkenini burada tanımlıyoruz
+        const auth = getAuth(app);
 
         // Eski oturumu temizliyoruz
         localStorage.removeItem("currentUser");
