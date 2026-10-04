@@ -44,16 +44,15 @@ body::before {
     z-index: 0;
 }
 
-/* KƏSİNTİSİZ LOOP (80px x 4 = 320px) */
+/* BİRİNCİ VƏ DÜZGÜN OLAN BLOK (Bu qalsın): */
 @keyframes moveDiagonal {
     0% {
         background-position: 0px 0px;
     }
     100% {
-        background-position: 320px 320px; /* 80-ə tam bölündüyü üçün sıfırlanma hissi olmur */
+        background-position: 320px 320px; /* Tam bölündüyü üçün sıçrayış/reset hissi olmur */
     }
 }
-
 /* Sol Yuxarıdan Sağ Aşağıya Hərəkət */
 @keyframes moveDiagonal {
     0% {
