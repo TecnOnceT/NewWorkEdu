@@ -1,4 +1,4 @@
-const TEACHER_USERNAME = "tecnoncet";
+const TEACHER_USERNAME = "tecn0ncet";
 
 document.addEventListener("DOMContentLoaded", function() {
     const currentUser = localStorage.getItem("currentUser");
