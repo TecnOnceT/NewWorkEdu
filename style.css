@@ -14,7 +14,6 @@ body {
     align-items: center;
     padding: 20px;
     color: #ffffff;
-    /* Qırmızı əsas gradient fon */
     background: linear-gradient(-45deg, #180505, #2d0b0b, #450a0a, #1a0505);
     background-size: 400% 400%;
     animation: gradientBG 12s ease infinite;
