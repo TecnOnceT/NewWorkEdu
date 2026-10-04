@@ -5,8 +5,7 @@ import {
     doc, 
     getDoc, 
     setDoc, 
-    onSnapshot, 
-    collection 
+    onSnapshot 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -25,6 +24,15 @@ const db = getFirestore(app);
 
 const TEACHER_USERNAME = "tecn0ncet";
 
+// 📌 BURAYA TƏLƏBƏLƏRİN SİYAHISINI YAZIN (Login siyahısı kimi istifadə olunur)
+const STUDENT_LIST = [
+    "Ali Mammadov",
+    "Leyla Aliyeva",
+    "Rashad Huseynov",
+    "Nigar Ahmedova",
+    "Elvin Qasimov"
+];
+
 document.addEventListener("DOMContentLoaded", async function() {
     const currentUser = localStorage.getItem("currentUser");
 
@@ -39,23 +47,27 @@ document.addEventListener("DOMContentLoaded", async function() {
     if (isTeacher) {
         document.getElementById("role-badge").textContent = "(Məllim)";
         document.getElementById("teacher-panel").style.display = "block";
+        
+        // Siyahıdakı tələbələri Firebase-də mövcudluğunu yoxlayıb yaradırıq
+        await initializeStudentsInFirebase();
+        // Müəllim üçün tələbələri canlı olaraq Firebase-dən izləyirik
         listenStudentsRealtime();
     } else {
         document.getElementById("role-badge").textContent = "(Tələbə)";
-        await registerStudentToFirebase(currentUser);
+        await registerSingleStudentToFirebase(currentUser);
     }
 
-    // Kod Laboratoriyasını aktivləşdiririk
+    // Kod Laboratoriyasını (Playground) başladırıq
     initCodePlayground();
 
-    // Çıxış Düyməsi
+    // Çıxış düyməsi
     const logoutBtn = document.getElementById("logout-btn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", logout);
     }
 });
 
-// 1. HTML/CSS Canlı Önizləmə (Playground) Funksiyası
+// 1. HTML və CSS Canlı Redaktor
 function initCodePlayground() {
     const htmlCode = document.getElementById("html-code");
     const cssCode = document.getElementById("css-code");
@@ -76,8 +88,14 @@ function initCodePlayground() {
     cssCode.addEventListener("input", updatePreview);
 }
 
-// 2. Tələbəni Firebase Firestore-a Qeyd Etmək
-async function registerStudentToFirebase(username) {
+// 2. Siyahıdakı Şagirdləri Firebase Firestore-a Yükləmək
+async function initializeStudentsInFirebase() {
+    for (const studentName of STUDENT_LIST) {
+        await registerSingleStudentToFirebase(studentName);
+    }
+}
+
+async function registerSingleStudentToFirebase(username) {
     const studentRef = doc(db, "students", username);
     const studentSnap = await getDoc(studentRef);
 
@@ -90,40 +108,37 @@ async function registerStudentToFirebase(username) {
     }
 }
 
-// 3. Müəllim Paneli: Tələbələri Canlı Rejimdə (Firebase-dən) Oxumaq
+// 3. Müəllim Paneli: Siyahıdakı Şagirdləri Firebase-dən Canlı Dinləmək
 function listenStudentsRealtime() {
-    const studentsCol = collection(db, "students");
+    const settingsRef = doc(db, "settings", "portal");
 
-    onSnapshot(studentsCol, (snapshot) => {
+    onSnapshot(settingsRef, (settingsSnap) => {
+        const lessonActive = settingsSnap.exists() ? settingsSnap.data().lessonActive : false;
         const tbody = document.getElementById("student-list");
         tbody.innerHTML = "";
 
-        const students = [];
-        snapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            if (data.username && data.username.trim().toLowerCase() !== TEACHER_USERNAME.toLowerCase()) {
-                students.push(data);
-            }
-        });
+        STUDENT_LIST.forEach(studentName => {
+            const studentRef = doc(db, "students", studentName);
 
-        if (students.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Hələ heç bir tələbə sistemə daxil olmayıb.</td></tr>`;
-            return;
-        }
+            onSnapshot(studentRef, (studentSnap) => {
+                let studentGrades = { lesson1: "-", lesson2: "-", lesson3: "-" };
+                if (studentSnap.exists()) {
+                    studentGrades = studentSnap.data().grades || studentGrades;
+                }
 
-        getDoc(doc(db, "settings", "portal")).then(settingsSnap => {
-            const lessonActive = settingsSnap.exists() ? settingsSnap.data().lessonActive : false;
+                let existingRow = document.getElementById(`row-${studentName}`);
+                if (!existingRow) {
+                    existingRow = document.createElement("tr");
+                    existingRow.id = `row-${studentName}`;
+                    tbody.appendChild(existingRow);
+                }
 
-            students.forEach(studentData => {
-                const student = studentData.username;
-                const studentGrades = studentData.grades || { lesson1: "-", lesson2: "-", lesson3: "-" };
-
-                const tr = document.createElement("tr");
+                existingRow.innerHTML = "";
 
                 // Tələbə Adı
                 const tdStudent = document.createElement("td");
                 const bStudent = document.createElement("b");
-                bStudent.textContent = student;
+                bStudent.textContent = studentName;
                 tdStudent.appendChild(bStudent);
 
                 // Dərs Statusu
@@ -134,12 +149,10 @@ function listenStudentsRealtime() {
                 btnToggle.addEventListener("click", () => toggleLesson(!lessonActive));
                 tdStatus.appendChild(btnToggle);
 
-                // Dərs 1
-                const tdG1 = createGradeInput(`g1-${student}`, studentGrades.lesson1);
-                // Dərs 2
-                const tdG2 = createGradeInput(`g2-${student}`, studentGrades.lesson2);
-                // Dərs 3
-                const tdG3 = createGradeInput(`g3-${student}`, studentGrades.lesson3);
+                // Dərs 1, 2, 3 Qiymət Xanaları
+                const tdG1 = createGradeInput(`g1-${studentName}`, studentGrades.lesson1);
+                const tdG2 = createGradeInput(`g2-${studentName}`, studentGrades.lesson2);
+                const tdG3 = createGradeInput(`g3-${studentName}`, studentGrades.lesson3);
 
                 // Yadda Saqla Düyməsi
                 const tdSave = document.createElement("td");
@@ -147,17 +160,15 @@ function listenStudentsRealtime() {
                 btnSave.className = "btn-danger";
                 btnSave.style.padding = "4px 10px";
                 btnSave.textContent = "Yadda Saqla";
-                btnSave.addEventListener("click", () => saveGrade(student));
+                btnSave.addEventListener("click", () => saveGrade(studentName));
                 tdSave.appendChild(btnSave);
 
-                tr.appendChild(tdStudent);
-                tr.appendChild(tdStatus);
-                tr.appendChild(tdG1);
-                tr.appendChild(tdG2);
-                tr.appendChild(tdG3);
-                tr.appendChild(tdSave);
-
-                tbody.appendChild(tr);
+                existingRow.appendChild(tdStudent);
+                existingRow.appendChild(tdStatus);
+                existingRow.appendChild(tdG1);
+                existingRow.appendChild(tdG2);
+                existingRow.appendChild(tdG3);
+                existingRow.appendChild(tdSave);
             });
         });
     });
@@ -180,18 +191,18 @@ async function toggleLesson(newState) {
     await setDoc(settingsRef, { lessonActive: newState }, { merge: true });
 }
 
-// Qiyməti Yadda Saxlamaq
-async function saveGrade(student) {
-    const g1 = document.getElementById(`g1-${student}`).value;
-    const g2 = document.getElementById(`g2-${student}`).value;
-    const g3 = document.getElementById(`g3-${student}`).value;
+// Qiymətləri Firebase-ə Yazmaq
+async function saveGrade(studentName) {
+    const g1 = document.getElementById(`g1-${studentName}`).value;
+    const g2 = document.getElementById(`g2-${studentName}`).value;
+    const g3 = document.getElementById(`g3-${studentName}`).value;
 
-    const studentRef = doc(db, "students", student);
+    const studentRef = doc(db, "students", studentName);
     await setDoc(studentRef, {
         grades: { lesson1: g1, lesson2: g2, lesson3: g3 }
     }, { merge: true });
 
-    alert(`${student} üçün Dərs 1, 2 və 3 qiymətləri yadda saxlanıldı!`);
+    alert(`${studentName} üçün Dərs 1, 2 və 3 qiymətləri Firebase-də yadda saxlanıldı!`);
 }
 
 function logout() {
