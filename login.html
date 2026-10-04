@@ -8,7 +8,6 @@
 </head>
 <body>
     <div class="login-card">
-        <!-- LOGO BÖLÜMÜ -->
         <div class="logo-container">
             <img src="OCKER2.png" height="120" alt="Logo">
             <div class="logo-text">Portal</div>
@@ -44,13 +43,10 @@
           measurementId: "G-RKRB3JEJ4G"
         };
 
-        // Firebase uygulamasını başlatıyoruz
         const app = initializeApp(firebaseConfig);
 
-        // HATA BURADAYDI: "auth" değişkenini burada tanımlıyoruz
         const auth = getAuth(app);
 
-        // Eski oturumu temizliyoruz
         localStorage.removeItem("currentUser");
 
         document.getElementById("login-btn").addEventListener("click", () => {
