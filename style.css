@@ -16,15 +16,20 @@ body {
     padding: 20px;
     color: #ffffff;
     /* Qırmızı əsas gradient fon */
-	background: linear-gradient(-45deg, #180505, #2d0b0b, #450a0a, #1a0505);
+    background: linear-gradient(-45deg, #180505, #2d0b0b, #450a0a, #1a0505);
     background-size: 400% 400%;
     animation: gradientBG 12s ease infinite;
     position: relative;
     overflow-x: hidden;
 }
 
-/* ARXA FONDAKI ŞƏKİL PATTERN-İ (SOL YUXARIDAN SAĞ AŞAĞIYA HƏRƏKƏT) */
-/* ARXA FONDAKI ŞƏKİL PATTERN-İ */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ARXA FONDAKI ŞƏKİL PATTERN-İ (SAĞ YUXARIDAN SOL AŞAĞIYA KƏSİNTİSİZ HƏRƏKƏT) */
 body::before {
     content: "";
     position: absolute;
@@ -44,22 +49,13 @@ body::before {
     z-index: 0;
 }
 
-/* BİRİNCİ VƏ DÜZGÜN OLAN BLOK (Bu qalsın): */
+/* KƏSİNTİSİZ ÇARPAZ LOOP ( Sağ yuxarıdan sol aşağıya: 80px x 4 = 320px ) */
 @keyframes moveDiagonal {
     0% {
-        background-position: 0px 0px;
+        background-position: 320px 0px;
     }
     100% {
-        background-position: 320px 320px; /* Tam bölündüyü üçün sıçrayış/reset hissi olmur */
-    }
-}
-/* Sol Yuxarıdan Sağ Aşağıya Hərəkət */
-@keyframes moveDiagonal {
-    0% {
-        background-position: 0px 0px;
-    }
-    100% {
-        background-position: 300px 300px; /* Şəkli çarpaz hərəkət etdirir */
+        background-position: 0px 320px;
     }
 }
 
