@@ -1,6 +1,6 @@
 const TEACHER_USERNAME = "tecn0ncet";
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
     const currentUser = localStorage.getItem("currentUser");
 
     if (!currentUser) {
@@ -12,6 +12,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const isTeacher = (currentUser.trim().toLowerCase() === TEACHER_USERNAME.trim().toLowerCase());
 
+    if (isTeacher) {
+        document.getElementById("role-badge").textContent = "(Məllim)";
+        document.getElementById("teacher-panel").style.display = "block";
+        
+        await loadStudentsFromFirebase();
+    } else {
+        document.getElementById("role-badge").textContent = "(Tələbə)";
+    }
+
+    renderCourses(currentUser, isTeacher);
+});
+
+// FIREBASE-DƏN TƏLƏBƏLƏRİ BİRBAŞA ÇƏKƏN FUNKSİYA
+async function loadStudentsFromFirebase() {
+    const tbody = document.getElementById("student-list");
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Tələbələr Firebase-dən yüklənir...</td></tr>`;
+
     let portalData = JSON.parse(localStorage.getItem("portalData")) || {
         lessonActive: false,
         pdfUrl: "cpp.pdf",
@@ -19,32 +36,38 @@ document.addEventListener("DOMContentLoaded", function() {
         grades: {}
     };
 
-    if (!isTeacher) {
-        if (!portalData.registeredStudents.includes(currentUser)) {
-            portalData.registeredStudents.push(currentUser);
-        }
-        if (!portalData.grades[currentUser]) {
-            portalData.grades[currentUser] = { lesson1: "-", lesson2: "-" };
-        }
-    }
+    try {
+        const snapshot = await db.collection("users").get();
+        let studentList = [];
 
-    portalData.registeredStudents = portalData.registeredStudents.filter(
-        st => st.trim().toLowerCase() !== TEACHER_USERNAME.trim().toLowerCase()
-    );
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const username = data.username || doc.id; 
 
-    localStorage.setItem("portalData", JSON.stringify(portalData));
+            if (username.trim().toLowerCase() !== TEACHER_USERNAME.toLowerCase()) {
+                studentList.push(username);
+            }
+        });
 
-    // Rol təyini və panel görüntüsü
-    if (isTeacher) {
-        document.getElementById("role-badge").textContent = "(Məllim)";
-        document.getElementById("teacher-panel").style.display = "block";
+        portalData.registeredStudents = studentList;
+        
+        studentList.forEach(student => {
+            if (!portalData.grades[student]) {
+                portalData.grades[student] = { lesson1: "-", lesson2: "-" };
+            }
+        });
+
+        localStorage.setItem("portalData", JSON.stringify(portalData));
+        
+        // Cədvəli ekrana çıxarırıq
         renderTeacherPanel();
-    } else {
-        document.getElementById("role-badge").textContent = "(Tələbə)";
-    }
 
-    renderCourses(currentUser, isTeacher);
-});
+    } catch (error) {
+        console.error("Firebase-dən məlumat çəkilərkən xəta baş verdi:", error);
+        // Əgər Firebase-dən almaq alınmazsa, lokal yaddaşdakını göstəririk
+        renderTeacherPanel();
+    }
+}
 
 function renderTeacherPanel() {
     const data = JSON.parse(localStorage.getItem("portalData")) || { registeredStudents: [], grades: {} };
@@ -56,7 +79,7 @@ function renderTeacherPanel() {
     );
 
     if (studentsOnly.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Hələ heç bir tələbə daxil olmayıb.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Firebase-də heç bir tələbə tapılmadı.</td></tr>`;
         return;
     }
 
