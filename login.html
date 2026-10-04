@@ -7,58 +7,68 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<div class="login-card">
-		<!-- LOGO BÖLÜMÜ -->
-		<div class="logo-container">
-			<img src="OCKER2.png" height="120">
-			<div class="logo-text">Portal</div>
-		</div>
+    <div class="login-card">
+        <!-- LOGO BÖLÜMÜ -->
+        <div class="logo-container">
+            <img src="OCKER2.png" height="120" alt="Logo">
+            <div class="logo-text">Portal</div>
+        </div>
 
-		<h2>Sistemə Giriş</h2>
-		...
+        <h2>Sistemə Giriş</h2>
         
         <div class="input-group">
             <label for="username">İstifadəçi adı</label>
-            <input type="text" id="username" placeholder="Məs: ali">
+            <input type="text" id="username" placeholder="Məs: NurgunF" autocomplete="off">
         </div>
 
         <div class="input-group">
             <label for="password">Şifrə</label>
-            <input type="password" id="password" placeholder="Məs: 123">
+            <input type="password" id="password" placeholder="Şifrəniz">
         </div>
 
-        <button class="btn-primary" onclick="login()">Giriş Et</button>
+        <button class="btn-primary" id="login-btn">Giriş Et</button>
         <p id="error-msg" class="error-msg"></p>
     </div>
+    <script type="module">
+		import { initializeApp } from "firebase/app";
+		import { getAnalytics } from "firebase/analytics";
+		const firebaseConfig = {
+		  apiKey: "AIzaSyDzfpUCfUJd4VNR_UfrR3BhQ8ZCV5jZsP8",
+		  authDomain: "neworkaccountprojet.firebaseapp.com",
+		  projectId: "neworkaccountprojet",
+		  storageBucket: "neworkaccountprojet.firebasestorage.app",
+		  messagingSenderId: "962982050109",
+		  appId: "1:962982050109:web:6886bb8c095a6f28a16d54",
+		  measurementId: "G-RKRB3JEJ4G"
+		};
+		const app = initializeApp(firebaseConfig);
+		const analytics = getAnalytics(app);
 
-    <script>
-        // 1. SƏHİFƏ AÇILANDA KÖHNƏ SESSİYANI SİLİRİK
-        // Bu addım sizi avtomatik portala atmağın qarşısını alır!
+        // Eski oturumu temizliyoruz
         localStorage.removeItem("currentUser");
 
-        const users = [
-            { username: "Test", password: "123" },
-           
-			
-        ];
-
-        function login() {
+        document.getElementById("login-btn").addEventListener("click", () => {
             const userInput = document.getElementById("username").value.trim();
             const passInput = document.getElementById("password").value.trim();
             const errorMsg = document.getElementById("error-msg");
 
-            const foundUser = users.find(u => u.username === userInput && u.password === passInput);
-
-            if (foundUser) {
-                // Giriş uğurludursa yeni istifadəçini yazırıq
-                localStorage.setItem("currentUser", foundUser.username);
-                // İndi təhlükəsiz şəkildə portala keçirik
-                window.location.href = "index.html";
-            } else {
-                errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
+            if (!userInput || !passInput) {
+                errorMsg.textContent = "Zəhmət olmasa bütün xanaları doldurun!";
+                return;
             }
-        }
-    </script>
 
+            errorMsg.textContent = "Yoxlanılır...";
+            const formattedEmail = `${userInput}@portal.com`;
+
+            signInWithEmailAndPassword(auth, formattedEmail, passInput)
+                .then((userCredential) => {
+                    localStorage.setItem("currentUser", userInput);
+                    window.location.href = "index.html";
+                })
+                .catch((error) => {
+                    errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
+                });
+        });
+    </script>
 </body>
 </html>
