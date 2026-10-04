@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let portalData = JSON.parse(localStorage.getItem("portalData")) || {
         lessonActive: false,
-        pdfUrl: "pdfs/ders1.pdf",
+        pdfUrl: "cpp.pdf",
         registeredStudents: [],
         grades: {}
     };
