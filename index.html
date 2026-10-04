@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dərslik Portalı</title>
+    <title>Dərslik və Kod Portalı</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="admin.css">
 </head>
@@ -12,7 +12,7 @@
     <div class="dashboard-container">
         <header>
             <div class="logo-container" style="margin-bottom: 0;">
-                <img src="OCKER2.png" height="129" alt="Logo" class="logo-img">
+                <img src="OCKER2.png" height="120" alt="Logo" class="logo-img">
                 <div class="logo-text">Portal</div>
             </div>
 
@@ -27,15 +27,18 @@
 
         <div id="teacher-panel" class="admin-section" style="display: none;">
             <h2 style="color: #fca5a5; margin-bottom: 10px;">Məllim İdarəetmə Paneli</h2>
-            <p style="font-size: 14px; opacity: 0.8;">Tələbələrin dərslərini aktivləşdirin və qiymətləndirin:</p>
+            <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;">
+                Tələbələrin dərslərini aktivləşdirin və Firebase üzərindən qiymətləndirin:
+            </p>
             
             <table class="admin-table">
                 <thead>
                     <tr>
                         <th>Tələbə</th>
                         <th>Dərs Statusu</th>
-                        <th>1-ci Dərs Qiyməti</th>
-                        <th>2-ci Dərs Qiyməti</th>
+                        <th>Dərs 1 Qiyməti</th>
+                        <th>Dərs 2 Qiyməti</th>
+                        <th>Dərs 3 Qiyməti</th>
                         <th>Əməliyyat</th>
                     </tr>
                 </thead>
@@ -44,9 +47,23 @@
             </table>
         </div>
 
-        <h2 style="margin-bottom: 24px; color: #ffffff; font-weight: 600;">Dərslikləriniz:</h2>
+        <h2 style="margin-top: 30px; margin-bottom: 15px; color: #ffffff; font-weight: 600;">HTML & CSS Eksperiment Laboratoriyası</h2>
         
-        <div class="courses-grid" id="courses-container">
+        <div class="playground-container" id="playground-section">
+            <div class="editor-box">
+                <label>HTML Kodu:</label>
+                <textarea id="html-code" placeholder="<h1>Xoş gəldiniz!</h1>&#10;<p>Kodunuzu bura yazın...</p>"></textarea>
+            </div>
+
+            <div class="editor-box">
+                <label>CSS Kodu:</label>
+                <textarea id="css-code" placeholder="h1 { color: #fca5a5; }&#10;p { font-size: 18px; }"></textarea>
+            </div>
+
+            <div class="preview-box">
+                <label>Canlı Nəticə (Preview):</label>
+                <iframe id="code-preview"></iframe>
+            </div>
         </div>
     </div>
 
