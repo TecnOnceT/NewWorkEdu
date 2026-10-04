@@ -1,6 +1,22 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDzfpUCfUJd4VNR_UfrR3BhQ8ZCV5jZsP8",
+  authDomain: "neworkaccountprojet.firebaseapp.com",
+  projectId: "neworkaccountprojet",
+  storageBucket: "neworkaccountprojet.firebasestorage.app",
+  messagingSenderId: "962982050109",
+  appId: "1:962982050109:web:6886bb8c095a6f28a16d54",
+  measurementId: "G-RKRB3JEJ4G"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
 const TEACHER_USERNAME = "tecn0ncet";
 
-document.addEventListener("DOMContentLoaded", async function() {
+document.addEventListener("DOMContentLoaded", function() {
     const currentUser = localStorage.getItem("currentUser");
 
     if (!currentUser) {
@@ -12,62 +28,46 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     const isTeacher = (currentUser.trim().toLowerCase() === TEACHER_USERNAME.trim().toLowerCase());
 
+    let portalData = JSON.parse(localStorage.getItem("portalData")) || {
+        lessonActive: false,
+        pdfUrl: "pdfs/ders1.pdf",
+        registeredStudents: [],
+        grades: {}
+    };
+
+    // Tələbə daxil olubsa, onu siyahıya əlavə edirik
+    if (!isTeacher) {
+        if (!portalData.registeredStudents.includes(currentUser)) {
+            portalData.registeredStudents.push(currentUser);
+        }
+        if (!portalData.grades[currentUser]) {
+            portalData.grades[currentUser] = { lesson1: "-", lesson2: "-" };
+        }
+    }
+
+    // Müəllim adını tələbələr siyahısından tamamilə kənarlaşdırırıq
+    portalData.registeredStudents = portalData.registeredStudents.filter(
+        st => st.trim().toLowerCase() !== TEACHER_USERNAME.trim().toLowerCase()
+    );
+
+    localStorage.setItem("portalData", JSON.stringify(portalData));
+
     if (isTeacher) {
         document.getElementById("role-badge").textContent = "(Məllim)";
         document.getElementById("teacher-panel").style.display = "block";
-        
-        await loadStudentsFromFirebase();
+        renderTeacherPanel();
     } else {
         document.getElementById("role-badge").textContent = "(Tələbə)";
     }
 
     renderCourses(currentUser, isTeacher);
-});
 
-// FIREBASE-DƏN TƏLƏBƏLƏRİ BİRBAŞA ÇƏKƏN FUNKSİYA
-async function loadStudentsFromFirebase() {
-    const tbody = document.getElementById("student-list");
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Tələbələr Firebase-dən yüklənir...</td></tr>`;
-
-    let portalData = JSON.parse(localStorage.getItem("portalData")) || {
-        lessonActive: false,
-        pdfUrl: "cpp.pdf",
-        registeredStudents: [],
-        grades: {}
-    };
-
-    try {
-        const snapshot = await db.collection("users").get();
-        let studentList = [];
-
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const username = data.username || doc.id; 
-
-            if (username.trim().toLowerCase() !== TEACHER_USERNAME.toLowerCase()) {
-                studentList.push(username);
-            }
-        });
-
-        portalData.registeredStudents = studentList;
-        
-        studentList.forEach(student => {
-            if (!portalData.grades[student]) {
-                portalData.grades[student] = { lesson1: "-", lesson2: "-" };
-            }
-        });
-
-        localStorage.setItem("portalData", JSON.stringify(portalData));
-        
-        // Cədvəli ekrana çıxarırıq
-        renderTeacherPanel();
-
-    } catch (error) {
-        console.error("Firebase-dən məlumat çəkilərkən xəta baş verdi:", error);
-        // Əgər Firebase-dən almaq alınmazsa, lokal yaddaşdakını göstəririk
-        renderTeacherPanel();
+    // Çıxış düyməsi event listener-i
+    const logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", logout);
     }
-}
+});
 
 function renderTeacherPanel() {
     const data = JSON.parse(localStorage.getItem("portalData")) || { registeredStudents: [], grades: {} };
@@ -79,7 +79,7 @@ function renderTeacherPanel() {
     );
 
     if (studentsOnly.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Firebase-də heç bir tələbə tapılmadı.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Hələ heç bir tələbə daxil olmayıb.</td></tr>`;
         return;
     }
 
@@ -90,15 +90,27 @@ function renderTeacherPanel() {
         tr.innerHTML = `
             <td><b>${student}</b></td>
             <td>
-                <button class="btn-toggle ${data.lessonActive ? 'btn-active' : 'btn-passive'}" onclick="toggleLesson()">
+                <button class="btn-toggle ${data.lessonActive ? 'btn-active' : 'btn-passive'}" data-action="toggle">
                     ${data.lessonActive ? 'Aktivdir' : 'Deaktivdir'}
                 </button>
             </td>
             <td><input type="text" class="grade-input" value="${studentGrades.lesson1}" id="g1-${student}"></td>
             <td><input type="text" class="grade-input" value="${studentGrades.lesson2}" id="g2-${student}"></td>
-            <td><button class="btn-danger" style="padding: 4px 10px;" onclick="saveGrade('${student}')">Yadda Saqla</button></td>
+            <td><button class="btn-danger" style="padding: 4px 10px;" data-action="save" data-student="${student}">Yadda Saqla</button></td>
         `;
         tbody.appendChild(tr);
+    });
+
+    // Cədvəldəki düymələrə click hadisələrinin bağlanması
+    tbody.querySelectorAll('button[data-action="toggle"]').forEach(btn => {
+        btn.addEventListener('click', toggleLesson);
+    });
+
+    tbody.querySelectorAll('button[data-action="save"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const student = e.target.getAttribute('data-student');
+            saveGrade(student);
+        });
     });
 }
 
@@ -157,6 +169,11 @@ function renderCourses(username, isTeacher) {
 }
 
 function logout() {
-    localStorage.removeItem("currentUser");
-    window.location.href = "login.html";
+    signOut(auth).then(() => {
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+    }).catch(() => {
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+    });
 }
