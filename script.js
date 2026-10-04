@@ -1,5 +1,4 @@
 const TEACHER_USERNAME = "tecn0ncet";
-
 document.addEventListener("DOMContentLoaded", function() {
     const currentUser = localStorage.getItem("currentUser");
 
@@ -17,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
         grades: {}
     };
 
-    const isTeacher = (currentUser.toLowerCase() === TEACHER_USERNAME.toLowerCase());
+    const isTeacher = (currentUser.trim().toLowerCase() === TEACHER_USERNAME.trim().toLowerCase());
 
     if (!isTeacher) {
         if (!portalData.registeredStudents.includes(currentUser)) {
