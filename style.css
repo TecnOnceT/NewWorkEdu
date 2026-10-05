@@ -71,18 +71,34 @@ body::before {
 }
 .pdf-viewer-container {
     width: 100%;
-    height: 650px;
+    height: 550px;
     border-radius: 10px;
     overflow: hidden;
-    margin: 15px 0;
+    margin: 18px 0;
     border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .pdf-viewer-container iframe {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+.btn-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.btn-group .btn-primary {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .btn-download {
