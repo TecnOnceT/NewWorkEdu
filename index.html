@@ -9,7 +9,6 @@
 <body>
 
     <div class="dashboard-container">
-        <!-- Header -->
         <header>
             <div class="logo-container" style="margin-bottom: 0;">
                 <img src="OCKER2.png" alt="Logo" class="logo-img">
@@ -24,7 +23,6 @@
             </div>
         </header>
 
-        <!-- DƏRSLİK BÖLÜMÜ -->
         <h2 style="margin-bottom: 24px; color: #ffffff; font-weight: 600;">Dərslikləriniz:</h2>
         
         <div class="courses-grid">
@@ -32,7 +30,6 @@
                 <h3>HTML 1-ci Dərs</h3>
                 <p>Dərs materialını sayt üzərindən oxuya və ya aşağıdakı düymələrdən tam ekran baxıb yükləyə bilərsiniz.</p>
                 
-                <!-- Genişləndirilmiş PDF Oxuyucu -->
                 <div class="pdf-viewer-container">
                     <iframe id="pdf-frame-1" src="cpp.pdf" allowfullscreen></iframe>
                 </div>
@@ -75,50 +72,6 @@ button {
             </div>
         </div>
     </div>
-
-    <script>
-        // User və Logout Məntiqi
-        document.addEventListener("DOMContentLoaded", function() {
-            const currentUser = localStorage.getItem("currentUser");
-            if (currentUser) {
-                document.getElementById("user-display").textContent = currentUser;
-            }
-            updatePreview(); // İlk yüklənmədə canlı görünüşü yaradın
-        });
-
-        function logout() {
-            localStorage.removeItem("currentUser");
-            window.location.href = "login.html";
-        }
-
-        function openFullscreen(iframeId) {
-            const iframe = document.getElementById(iframeId);
-            if (iframe.requestFullscreen) {
-                iframe.requestFullscreen();
-            } else if (iframe.webkitRequestFullscreen) {
-                iframe.webkitRequestFullscreen();
-            } else if (iframe.msRequestFullscreen) {
-                iframe.msRequestFullscreen();
-            }
-        }
-
-        // Canlı Redaktor Məntiqi
-        const htmlCode = document.getElementById("html-code");
-        const cssCode = document.getElementById("css-code");
-        const previewFrame = document.getElementById("live-preview");
-
-        function updatePreview() {
-            const html = htmlCode.value;
-            const css = `<style>${cssCode.value}</style>`;
-            const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
-            
-            previewDoc.open();
-            previewDoc.write(html + css);
-            previewDoc.close();
-        }
-
-        htmlCode.addEventListener("input", updatePreview);
-        cssCode.addEventListener("input", updatePreview);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
