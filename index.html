@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dərslik Portalı</title>
     <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
 
@@ -15,6 +14,13 @@
                 <img src="OCKER2.png" alt="Logo" class="logo-img">
                 <div class="logo-text">Portal</div>
             </div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h1 style="font-size: 16px; font-weight: 500; color: #ffffff;">
+                    Xoş gəldin, <span id="user-display" style="color:#fca5a5; font-weight: 700;">Tələbə</span>!
+                </h1>
+                <button class="btn-danger" onclick="logout()">Çıxış Et</button>
+            </div>
         </header>
 
         <h2 style="margin-bottom: 24px; color: #ffffff; font-weight: 600;">Dərslikləriniz:</h2>
@@ -23,17 +29,44 @@
             
             <div class="course-card">
                 <h3>HTML 1-ci Dərs</h3>
-                <p>Dərs materialını sayt üzərindən oxuya və ya aşağıdakı düymədən kompüterinizə yükləyə bilərsiniz.</p>
+                <p>Dərs materialını sayt üzərindən oxuya və ya aşağıdakı düymələrdən tam ekran baxıb yükləyə bilərsiniz.</p>
                 
                 <div class="pdf-viewer-container">
-                    <iframe src="cpp.pdf"></iframe>
+                    <iframe id="pdf-frame-1" src="cpp.pdf" allowfullscreen></iframe>
                 </div>
 
-                <a href="pdfs/ders1.pdf" download class="btn-primary btn-download">PDF Yüklə</a>
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="openFullscreen('pdf-frame-1')">Tam Ekran Oxu</button>
+                    <a href="cpp.pdf" download class="btn-primary btn-download">PDF Yüklə</a>
+                </div>
             </div>
 
         </div>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentUser = localStorage.getItem("currentUser");
+            if (currentUser) {
+                document.getElementById("user-display").textContent = currentUser;
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem("currentUser");
+            window.location.href = "login.html";
+        }
+
+        function openFullscreen(iframeId) {
+            const iframe = document.getElementById(iframeId);
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.webkitRequestFullscreen) {
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) {
+                iframe.msRequestFullscreen();
+            }
+        }
+    </script>
 </body>
 </html>
