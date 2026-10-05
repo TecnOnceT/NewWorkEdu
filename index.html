@@ -6,7 +6,27 @@
     <title>Dərslik Portalı</title>
     <!-- CSS Faylları -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="admin.css">
+    <style>
+        .pdf-viewer-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .pdf-viewer-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .course-card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+    </style>
 </head>
 <body>
 
@@ -16,46 +36,41 @@
                 <img src="OCKER2.png" height="129" alt="Logo" class="logo-img">
                 <div class="logo-text">Portal</div>
             </div>
-
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <h1 style="font-size: 18px; font-weight: 500;">
-                    Xoş gəldin, <span id="user-display" style="color:#fca5a5; font-weight: 700;"></span> 
-                    <span id="role-badge" style="font-size: 12px; opacity: 0.8;"></span>!
-                </h1>
-                <button class="btn-danger" onclick="logout()">Çıxış Et</button>
-            </div>
         </header>
 
-        <!-- MƏLLİM (ADMİN) PANELİ -->
-        <div id="teacher-panel" class="admin-section" style="display: none;">
-            <h2 style="color: #fca5a5; margin-bottom: 10px;">Məllim İdarəetmə Paneli</h2>
-            <p style="font-size: 14px; opacity: 0.8;">Tələbələrin dərslərini aktivləşdirin və qiymətləndirin:</p>
-            
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Tələbə</th>
-                        <th>Dərs Statusu</th>
-                        <th>1-ci Dərs Qiyməti</th>
-                        <th>2-ci Dərs Qiyməti</th>
-                        <th>Əməliyyat</th>
-                    </tr>
-                </thead>
-                <tbody id="student-list">
-                    <!-- Tələbələr daxil olduqca dinamik gələcək -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- TƏLƏBƏ DƏRSLİK BÖLÜMÜ -->
+        <!-- DƏRSLİK BÖLÜMÜ -->
         <h2 style="margin-bottom: 24px; color: #ffffff; font-weight: 600;">Dərslikləriniz:</h2>
         
         <div class="courses-grid" id="courses-container">
-            <!-- Dərslər JS ilə yüklənəcək -->
+            
+            <!-- 1-ci DƏRS -->
+            <div class="course-card">
+                <h3 style="color: #ffffff; font-size: 20px;">HTML 1-ci Dərs</h3>
+                <p style="opacity: 0.8; color: #cbd5e1; margin-top: 5px;">Dərs materialını sayt üzərindən oxuya və ya kompüterinizə yükləyə bilərsiniz.</p>
+                
+                <!-- Sayt daxilində PDF oxuyucu -->
+                <div class="pdf-viewer-container">
+                    <iframe src="pdfs/ders1.pdf"></iframe>
+                </div>
+
+                <a href="pdfs/ders1.pdf" download class="btn-primary" style="display: inline-block; text-decoration: none; text-align: center;">PDF Yüklə</a>
+            </div>
+
+            <!-- 2-ci DƏRS -->
+            <div class="course-card">
+                <h3 style="color: #ffffff; font-size: 20px;">HTML 2-ci Dərs</h3>
+                <p style="opacity: 0.8; color: #cbd5e1; margin-top: 5px;">HTML cədvəllər və formalar haqqında dərs materialı.</p>
+                
+                <!-- Sayt daxilində PDF oxuyucu -->
+                <div class="pdf-viewer-container">
+                    <iframe src="pdfs/ders2.pdf"></iframe>
+                </div>
+
+                <a href="pdfs/ders2.pdf" download class="btn-primary" style="display: inline-block; text-decoration: none; text-align: center;">PDF Yüklə</a>
+            </div>
+
         </div>
     </div>
 
-    <!-- Xarici Script Faylı -->
-    <script src="script.js"></script>
 </body>
 </html>
