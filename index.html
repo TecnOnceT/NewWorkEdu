@@ -4,27 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dərslik Portalı</title>
-    <!-- CSS Faylları -->
     <link rel="stylesheet" href="style.css">
     <style>
         .pdf-viewer-container {
             width: 100%;
-            height: 500px;
-            border-radius: 8px;
+            height: 400px;
+            border-radius: 10px;
             overflow: hidden;
             margin: 15px 0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.3);
         }
+        
         .pdf-viewer-container iframe {
             width: 100%;
             height: 100%;
             border: none;
         }
-        .course-card {
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 24px;
+
+        .btn-download {
+            display: block;
+            text-decoration: none;
+            text-align: center;
         }
     </style>
 </head>
@@ -33,40 +34,24 @@
     <div class="dashboard-container">
         <header>
             <div class="logo-container" style="margin-bottom: 0;">
-                <img src="OCKER2.png" height="129" alt="Logo" class="logo-img">
+                <img src="OCKER2.png" alt="Logo" class="logo-img">
                 <div class="logo-text">Portal</div>
             </div>
         </header>
 
-        <!-- DƏRSLİK BÖLÜMÜ -->
         <h2 style="margin-bottom: 24px; color: #ffffff; font-weight: 600;">Dərslikləriniz:</h2>
         
-        <div class="courses-grid" id="courses-container">
+        <div class="courses-grid">
             
-            <!-- 1-ci DƏRS -->
             <div class="course-card">
-                <h3 style="color: #ffffff; font-size: 20px;">HTML 1-ci Dərs</h3>
-                <p style="opacity: 0.8; color: #cbd5e1; margin-top: 5px;">Dərs materialını sayt üzərindən oxuya və ya kompüterinizə yükləyə bilərsiniz.</p>
+                <h3>HTML 1-ci Dərs</h3>
+                <p>Dərs materialını sayt üzərindən oxuya və ya aşağıdakı düymədən kompüterinizə yükləyə bilərsiniz.</p>
                 
-                <!-- Sayt daxilində PDF oxuyucu -->
                 <div class="pdf-viewer-container">
-                    <iframe src="pdfs/ders1.pdf"></iframe>
+                    <iframe src="cpp.pdf"></iframe>
                 </div>
 
-                <a href="pdfs/ders1.pdf" download class="btn-primary" style="display: inline-block; text-decoration: none; text-align: center;">PDF Yüklə</a>
-            </div>
-
-            <!-- 2-ci DƏRS -->
-            <div class="course-card">
-                <h3 style="color: #ffffff; font-size: 20px;">HTML 2-ci Dərs</h3>
-                <p style="opacity: 0.8; color: #cbd5e1; margin-top: 5px;">HTML cədvəllər və formalar haqqında dərs materialı.</p>
-                
-                <!-- Sayt daxilində PDF oxuyucu -->
-                <div class="pdf-viewer-container">
-                    <iframe src="pdfs/ders2.pdf"></iframe>
-                </div>
-
-                <a href="pdfs/ders2.pdf" download class="btn-primary" style="display: inline-block; text-decoration: none; text-align: center;">PDF Yüklə</a>
+                <a href="pdfs/ders1.pdf" download class="btn-primary btn-download">PDF Yüklə</a>
             </div>
 
         </div>
