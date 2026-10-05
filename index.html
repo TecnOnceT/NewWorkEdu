@@ -23,42 +23,63 @@
             </div>
         </header>
 
-    <h2 class="editor-title"> HTML & CSS Eksperiment Sahəsi:</h2>
-    
-    <div class="editor-container">
-        <div class="editor-column">
-            <div class="code-box">
-                <label for="html-code">HTML Kodu:</label>
-                <textarea id="html-code" spellcheck="false"><h1>Salam Dünya!</h1>
-    <p>Bu mənim ilk eksperimentimdir.</p>
-    <button>Düymə</button></textarea>
-            </div>
-    
-            <div class="code-box">
-                <label for="css-code">CSS Kodu:</label>
-                <textarea id="css-code" spellcheck="false">h1 {
-      color: #fca5a5;
-      font-family: sans-serif;
-    }
-    p {
-      color: #ffffff;
-    }
-    button {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }</textarea>
+        <!-- DƏRSLİK BÖLÜMÜ -->
+        <h2 style="margin-bottom: 24px; color: #ffffff; font-weight: 600;">Dərslikləriniz:</h2>
+        
+        <div class="courses-grid">
+            <div class="course-card">
+                <h3>HTML 1-ci Dərs</h3>
+                <p>Dərs materialını sayt üzərindən oxuya və ya aşağıdakı düymələrdən tam ekran baxıb yükləyə bilərsiniz.</p>
+                
+                <div class="pdf-viewer-container">
+                    <iframe id="pdf-frame-1" src="cpp.pdf" allowfullscreen></iframe>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="openFullscreen('pdf-frame-1')">Tam Ekran Oxu</button>
+                    <a href="cpp.pdf" download class="btn-primary btn-download">PDF Yüklə</a>
+                </div>
             </div>
         </div>
-    
-        <div class="preview-column">
-            <label>Canlı Nəticə (Preview):</label>
-            <iframe id="live-preview"></iframe>
+
+        <h2 class="editor-title">HTML & CSS Eksperiment Sahəsi:</h2>
+        
+        <div class="editor-container">
+            <div class="editor-column">
+                <div class="code-box">
+                    <label for="html-code">HTML Kodu:</label>
+                    <textarea id="html-code" spellcheck="false"><h1>Salam Dünya!</h1>
+<p>Bu mənim ilk eksperimentimdir.</p>
+<button>Düymə</button></textarea>
+                </div>
+
+                <div class="code-box">
+                    <label for="css-code">CSS Kodu:</label>
+                    <textarea id="css-code" spellcheck="false">h1 {
+  color: #fca5a5;
+  font-family: sans-serif;
+}
+p {
+  color: #ffffff;
+}
+button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}</textarea>
+                </div>
+            </div>
+
+            <div class="preview-column">
+                <label>Canlı Nəticə (Preview):</label>
+                <iframe id="live-preview"></iframe>
+            </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
