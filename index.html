@@ -22,22 +22,25 @@
                 <button class="btn-danger" onclick="logout()">Çıxış Et</button>
             </div>
         </header>
-
-        <!-- DƏRSLİK BÖLÜMÜ -->
+        
         <h2 style="margin-bottom: 24px; color: #ffffff; font-weight: 600;">Dərslikləriniz:</h2>
         
         <div class="courses-grid">
             <div class="course-card">
                 <h3>HTML 1-ci Dərs</h3>
-                <p>Dərs materialını sayt üzərindən oxuya və ya aşağıdakı düymələrdən tam ekran baxıb yükləyə bilərsiniz.</p>
+                <p>Dərs materialı hal-hazırda əlçatan deyil.</p>
                 
-                <div class="pdf-viewer-container">
-                    <iframe id="pdf-frame-1" src="cpp.pdf" allowfullscreen></iframe>
+                <!-- PDF yerinə göstərilən mesaj -->
+                <div class="pdf-viewer-container disabled-viewer">
+                    <div class="pdf-placeholder">
+                        <span style="font-size: 32px;">Aktiv Deyil!</span>
+                        <p style="color: #fca5a5; font-size: 16px; font-weight: 600; margin-top: 8px;">Dərs aktiv deyil!</p>
+                    </div>
                 </div>
-
+        
                 <div class="btn-group">
-                    <button class="btn-primary" onclick="openFullscreen('pdf-frame-1')">Tam Ekran Oxu</button>
-                    <a href="cpp.pdf" download class="btn-primary btn-download">PDF Yüklə</a>
+                    <button class="btn-primary btn-disabled" disabled>Tam Ekran Oxu</button>
+                    <button class="btn-primary btn-disabled" disabled>PDF Yüklə</button>
                 </div>
             </div>
         </div>
