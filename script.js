@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function logout() {
     localStorage.removeItem("currentUser");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 
 function openFullscreen(iframeId) {
