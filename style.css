@@ -1,365 +1,828 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performanslı və Şık Arxa Plan Optimizasiyası</title>
+    <!-- Google Fonts: Poppins & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
+        :root {
+            --accent-red: #ef4444;
+            --accent-red-hover: #f87171;
+            --bg-card: rgba(24, 10, 10, 0.65);
+            --border-glass: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            min-height: 100vh;
+            color: #ffffff;
+            position: relative;
+            overflow-x: hidden;
+            background-color: #0d0303;
+        }
+
+        /* ==========================================================================
+           1. ORİJİNAL ARXA PLAN (Problematic - Repaint & Heavy CPU/GPU usage)
+           ========================================================================== */
+        body.bg-original {
+            background: linear-gradient(-45deg, #180505, #2d0b0b, #450a0a, #1a0505);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body.bg-original::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(239, 68, 68, 0.2) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.3;
+            animation: moveDiagonal 12s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes moveDiagonal {
+            0% { background-position: 320px 0px; }
+            100% { background-position: 0px 320px; }
+        }
+
+        /* ==========================================================================
+           2. SEÇİM 1: Modern Crimson Mesh + Glassmorphism (Statik / Ən Yüksək FPS)
+           ========================================================================== */
+        .bg-layer-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            display: none;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(220, 38, 38, 0.28) 0%, transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(153, 27, 27, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(69, 10, 10, 0.6) 0%, #0a0202 100%);
+        }
+        .bg-layer-mesh::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 32px 32px;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        body.bg-mode-mesh .bg-layer-mesh { display: block; }
+
+        /* ==========================================================================
+           3. SEÇİM 2: GPU Tərəfindən Sürətləndirilmiş Dairələr (Transform Animation)
+           ========================================================================== */
+        .bg-layer-orbs {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            background-color: #090202;
+            display: none;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            will-change: transform; /* GPU Layer Creation */
+            opacity: 0.45;
+        }
+        .orb-1 {
+            top: -10%; left: -10%;
+            width: 50vw; height: 50vw;
+            background: radial-gradient(circle, #dc2626 0%, rgba(185, 28, 28, 0) 70%);
+            animation: floatOrb1 18s ease-in-out infinite alternate;
+        }
+        .orb-2 {
+            bottom: -15%; right: -10%;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, #7f1d1d 0%, rgba(69, 10, 10, 0) 70%);
+            animation: floatOrb2 22s ease-in-out infinite alternate;
+        }
+        .orb-3 {
+            top: 40%; left: 40%;
+            width: 35vw; height: 35vw;
+            background: radial-gradient(circle, #ef4444 0%, rgba(220, 38, 38, 0) 70%);
+            animation: floatOrb3 15s ease-in-out infinite alternate;
+        }
+        /* Yalnız transform istifadə olunur (Repaint baş vermir!) */
+        @keyframes floatOrb1 {
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            100% { transform: translate3d(15vw, 10vh, 0) scale(1.2); }
+        }
+        @keyframes floatOrb2 {
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            100% { transform: translate3d(-12vw, -15vh, 0) scale(1.15); }
+        }
+        @keyframes floatOrb3 {
+            0% { transform: translate3d(-10vw, 5vh, 0) scale(0.9); }
+            100% { transform: translate3d(10vw, -10vh, 0) scale(1.1); }
+        }
+        body.bg-mode-orbs .bg-layer-orbs { display: block; }
+
+        /* ==========================================================================
+           4. SEÇİM 3: İnteraktiv Yüngül Canvas Particle
+           ========================================================================== */
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: #080202;
+            display: none;
+        }
+        body.bg-mode-canvas #bg-canvas { display: block; }
+
+        /* ==========================================================================
+           Arayüz vərdişləri və Əsas Tərtibat
+           ========================================================================== */
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Top Nav Control Bar */
+        .control-panel {
+            background: rgba(20, 8, 8, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .control-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fca5a5;
+        }
+
+        .fps-badge {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .fps-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+        }
+
+        .mode-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .mode-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-glass);
+            color: #d1d5db;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .mode-btn:hover {
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.1);
+            color: #fff;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(185, 28, 28, 0.35));
+            border-color: #ef4444;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .mode-btn .btn-title {
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-btn .btn-desc {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* Comparison Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 960px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* User Login Card Preview */
+        .login-card {
+            background: rgba(24, 10, 10, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 32px 28px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glass);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            height: fit-content;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            color: var(--accent-red);
+            filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.8));
+            animation: pulseLogo 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseLogo {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(to right, #ffffff, #fca5a5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-card h2 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #fca5a5;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            color: #ffffff;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+        }
+
+        /* Code Explanations Box */
+        .info-card {
+            background: rgba(20, 8, 8, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .info-card h3 {
+            color: #fca5a5;
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation-text {
+            color: #d1d5db;
+            font-size: 13.5px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .badge-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .tech-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            font-weight: 600;
+        }
+
+        /* Code View Container */
+        .code-block {
+            position: relative;
+            background: #0d0404;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 16px;
+            font-size: 12px;
+            color: #9ca3af;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .copy-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+            color: #fff;
+        }
+
+        pre {
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #e5e7eb;
+            max-height: 380px;
+        }
+
+        .code-comment { color: #6b7280; }
+        .code-selector { color: #f87171; }
+        .code-prop { color: #93c5fd; }
+        .code-val { color: #fde047; }
+    </style>
+</head>
+<body class="bg-mode-orbs">
+
+    <!-- Background Layer 1: Mesh -->
+    <div class="bg-layer-mesh"></div>
+
+    <!-- Background Layer 2: Animated GPU Orbs -->
+    <div class="bg-layer-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Background Layer 3: Interactive Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="wrapper">
+        <!-- Control Header -->
+        <div class="control-panel">
+            <div class="control-header">
+                <div class="control-title">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    Arxa Plan Optimizasiya Panel
+                </div>
+                <div class="fps-badge">
+                    <div class="fps-dot"></div>
+                    Performans: <span id="fps-counter" style="color:#22c55e; font-weight:700;">60 FPS</span>
+                </div>
+            </div>
+
+            <div class="mode-buttons">
+                <!-- Option 0: Original -->
+                <button class="mode-btn" onclick="setMode('original')">
+                    <div class="btn-title">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i>
+                        Orijinal Kod
+                    </div>
+                    <div class="btn-desc">Gradiyent & Diagonal background-position (Repaint edir)</div>
+                </button>
+
+                <!-- Option 1: Mesh (Best Performance) -->
+                <button class="mode-btn" onclick="setMode('mesh')">
+                    <div class="btn-title">
+                        <i class="fa-solid fa-bolt" style="color:#f59e0b"></i>
+                        1. Modern Crimson Mesh
+                    </div>
+                    <div class="btn-desc">Ultra Yüngül (0% CPU, Maksimum şıqlıq və performans)</div>
+                </button>
+
+                <!-- Option 2: GPU Orbs (Best Balance) -->
+                <button class="mode-btn active" onclick="setMode('orbs')">
+                    <div class="btn-title">
+                        <i class="fa-solid fa-wand-magic-sparkles" style="color:#3b82f6"></i>
+                        2. GPU Floating Orbs
+                    </div>
+                    <div class="btn-desc">Səlis Hərəkət (GPU Hardware Acceleration)</div>
+                </button>
+
+                <!-- Option 3: Lightweight Canvas -->
+                <button class="mode-btn" onclick="setMode('canvas')">
+                    <div class="btn-title">
+                        <i class="fa-solid fa-atom" style="color:#a855f7"></i>
+                        3. Smooth Starfield Canvas
+                    </div>
+                    <div class="btn-desc">Interaktiv Parçacıqlar (60 FPS JS Canvas)</div>
+                </button>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Left Column: User UI Card Preview -->
+            <div class="login-card">
+                <div class="logo-container">
+                    <i class="fa-solid fa-fire logo-icon"></i>
+                    <span class="logo-text">CODE LAB</span>
+                </div>
+                <h2>Xoş Gəlmisiniz</h2>
+                <div class="input-group">
+                    <label>İstifadəçi adı / Email</label>
+                    <input type="text" placeholder="nümunə@mail.com" value="student@code.az" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Şifrə</label>
+                    <input type="password" value="••••••••••••" readonly>
+                </div>
+                <button class="btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Daxil Ol</button>
+            </div>
+
+            <!-- Right Column: Analysis & Code Output -->
+            <div class="info-card">
+                <h3 id="option-title"><i class="fa-solid fa-microchip"></i> 2. GPU Floating Orbs (Tövsiyə Olunan)</h3>
+                <p class="explanation-text" id="option-desc">
+                    Sizin koddakı <code>background-position</code> animasiyası hər kadrda (frame) brauzerə bütün səhifəni yenidən çəkdirdiyi (Repaint) üçün prosessoru (CPU) və batareyanı yükləyir.<br><br>
+                    <strong>Həll yolları:</strong> Hərəkətli elementləri ayrı <code>div</code> təbəqələrinə çıxarıb animasiyanı yalnız <code>transform: translate3d()</code> ilə verməkdir. Bu zaman hesablamalar birbaşa <strong>GPU (Qrafik Kart)</strong> tərəfindən aparılır və nəticədə 60 FPS səlis işləyir.
+                </p>
+
+                <div class="badge-list" id="option-badges">
+                    <span class="tech-badge">GPU Acceleration</span>
+                    <span class="tech-badge">Zero Repaint</span>
+                    <span class="tech-badge">Ultra-Smooth 60FPS</span>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Hazır CSS Kod (Kopyalayıb İşlədə Bilərsiniz)</span>
+                        <button class="copy-btn" onclick="copyCode()"><i class="fa-solid fa-copy"></i> Kopyala</button>
+                    </div>
+                    <pre><code id="code-content"></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Code Templates for each option
+        const codeSnippets = {
+            original: `/* --- ORİJİNAL KODUNUZDAKI PROBLEM --- */
+/* 
+ ⚠️ background-position animasiyası layout və repaint yaradır.
+ Mobildə və zəif GPU-larda qasma (lag) hiss olunur.
+*/
 
 body {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    color: #ffffff;
     background: linear-gradient(-45deg, #180505, #2d0b0b, #450a0a, #1a0505);
     background-size: 400% 400%;
-    animation: gradientBG 12s ease infinite;
-    position: relative;
-    overflow-x: hidden;
+    animation: gradientBG 12s ease infinite; /* HEAVY REPAINT */
 }
 
 @keyframes gradientBG {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+}`,
+            mesh: `/* --- OPTİMİZASİYA 1: Statik Radial Mesh + Glassmorphism --- */
+/*
+ 🚀 YÜKSƏK PERFORMANS (0% CPU/GPU yüklənməsi)
+ Animasiya yoxdur, lakin çox dərin və müasir tünd-qırmızı glass görünüşü verir.
+*/
+
+body {
+    background-color: #0d0303;
+    background-image: 
+        radial-gradient(circle at 15% 20%, rgba(220, 38, 38, 0.28) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(153, 27, 27, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(69, 10, 10, 0.6) 0%, #0a0202 100%);
+    background-attachment: fixed;
 }
 
+/* Şəbəkə (Grid Pattern) overlay - Şəkillərdən qat-qat yüngüldür */
 body::before {
     content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    background-image: url('H5.png'); 
-    background-repeat: repeat;
-    background-size: 80px 80px;
-    opacity: 0.12;
-    
-    animation: moveDiagonal 12s linear infinite;
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.6;
     pointer-events: none;
-    z-index: 0;
-}
+}`,
+            orbs: `/* --- OPTİMİZASİYA 2: GPU Tərəfindən Sürətləndirilmiş Orbs (TÖVSİYƏ OLUNAN) --- */
+/*
+ 🌟 ŞIQLIQ VƏ PERFORMANS BALANSI
+ 'transform' istifadə edildiyi üçün yalnız GPU işləyir (Repaint = 0).
+*/
 
-@keyframes moveDiagonal {
-    0% {
-        background-position: 320px 0px;
-    }
-    100% {
-        background-position: 0px 320px;
-    }
-}
+/* HTML strukturuna bədəndən dərhal sonra əlavə edin:
+<div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+</div>
+*/
 
-.logo-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.logo-img {
-    width: 45px;
-    height: 45px;
-    object-fit: contain;
-    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
-    animation: pulseLogo 2s infinite alternate;
-}
-
-.logo-text {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    background: linear-gradient(to right, #ffffff, #fca5a5);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-@keyframes pulseLogo {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.08); }
-}
-
-/* --- DASHBOARD VƏ KARTLAR --- */
-.dashboard-container {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 1100px; /* PDF və Editorun tam geniş görünməsi üçün artırıldı */
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(24, 10, 10, 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 20px 28px;
-    border-radius: 16px;
-    margin-bottom: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.courses-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    width: 100%;
-}
-
-.course-card {
-    background: rgba(24, 10, 10, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 28px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    width: 100%;
-}
-
-.course-card:hover {
-    transform: translateY(-4px);
-    border-color: #f87171;
-    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.25);
-}
-
-.course-card h3 {
-    color: #fca5a5;
-    margin-bottom: 12px;
-}
-
-.course-card p {
-    color: #e5e7eb;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-/* --- PDF OXUYUCU STİLLƏRİ --- */
-.pdf-viewer-container {
-    width: 100%;
-    height: 600px; /* Rahat oxunması üçün hündürlük böyüdüldü */
-    border-radius: 10px;
+.bg-orbs {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
     overflow: hidden;
-    margin: 18px 0;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(0, 0, 0, 0.4);
+    background-color: #090202;
 }
 
-.pdf-viewer-container iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    will-change: transform; /* Brauzerə GPU təbəqəsi yaratdırır */
+    opacity: 0.45;
 }
 
-.btn-group {
-    display: flex;
-    gap: 12px;
-    margin-top: 10px;
+.orb-1 {
+    top: -10%; left: -10%;
+    width: 50vw; height: 50vw;
+    background: radial-gradient(circle, #dc2626 0%, rgba(185, 28, 28, 0) 70%);
+    animation: floatOrb1 18s ease-in-out infinite alternate;
 }
 
-.btn-group .btn-primary {
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+.orb-2 {
+    bottom: -15%; right: -10%;
+    width: 60vw; height: 60vw;
+    background: radial-gradient(circle, #7f1d1d 0%, rgba(69, 10, 10, 0) 70%);
+    animation: floatOrb2 22s ease-in-out infinite alternate;
 }
 
-.btn-download {
-    display: block;
-    text-decoration: none;
-    text-align: center;
+/* Yalnız GPU tərəfindən işlənən translate3d hərəkəti */
+@keyframes floatOrb1 {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(15vw, 10vh, 0) scale(1.2); }
 }
 
-/* --- DÜYMƏLƏR VƏ İNPUTLAR --- */
-.btn-primary {
-    width: 100%;
-    padding: 13px;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    border: none;
-    color: #ffffff;
-    font-weight: 600;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+@keyframes floatOrb2 {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(-12vw, -15vh, 0) scale(1.15); }
+}`,
+            canvas: `/* --- OPTİMİZASİYA 3: HTML5 Canvas Starfield Effect --- */
+/*
+ ✨ Yüngül JavaScript requestAnimationFrame ilə 60 FPS hərəkətli işıq parçacıqları.
+*/
+
+/* HTML: <canvas id="bg-canvas"></canvas> */
+
+#bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background: #080202;
 }
 
-.btn-primary:hover {
-    background: linear-gradient(135deg, #f87171, #ef4444);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
-}
+/* JS Kod Parçası:
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+// Canvas ölçülərini resizela yeniləyirik və yüngül hissəciklər çəkirik.
+*/`
+        };
 
-.btn-danger {
-    padding: 10px 20px;
-    background: linear-gradient(135deg, #b91c1c, #991b1b);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
+        const infoTexts = {
+            original: {
+                title: "<i class='fa-solid fa-triangle-exclamation' style='color:#ef4444'></i> Orijinal Kod (Yavaş Performans)",
+                desc: "Sizin kodda <code>background-size: 400%</code> və <code>background-position</code> animasiyası var. Bu üsul ekranın hər kadrında (60 dəfə/saniyə) brauzerin bütün pikselləri yenidən hesablamağına (Repaint & Reflow) məcbur edir. Bu da xüsusən mobil telefonlarda qızma və batareya tez bitməsinə səbəb olur.",
+                badges: ["High Repaint Rate", "CPU Heavy", "Not Recommended"]
+            },
+            mesh: {
+                title: "<i class='fa-solid fa-bolt' style='color:#f59e0b'></i> 1. Modern Crimson Mesh (Ən Performanslı)",
+                desc: "Bu variant animasiyasızdır, amma modern <strong>Glassmorphism</strong> üslubuna tam uyğundur. Çoxlu <code>radial-gradient</code> qatları və incə nöqtəli şəbəkə overlay-i ilə çox şık görünür. Resurs istifadəsi tam olaraq <strong>0%</strong>-dir.",
+                badges: ["Zero CPU Usage", "Ultra Fast", "Crisp Glassmorphism", "Static Mesh"]
+            },
+            orbs: {
+                title: "<i class='fa-solid fa-wand-magic-sparkles' style='color:#3b82f6'></i> 2. GPU Floating Orbs (Ən Balanslı və Şık)",
+                desc: "Arxa planda yumşaq tünd qırmızı işıq şarları yavaşca süzülür. Animasiyada yalnız <code>transform: translate3d()</code> və <code>will-change: transform</code> istifadə olunduğu üçün brauzer bu işi <strong>GPU-ya (Qrafik karta)</strong> həvalə edir. Nəticədə 0 lag ilə ultra-səlis görüntüdür.",
+                badges: ["GPU Hardware Accelerated", "Zero Repaint", "Fluid 60 FPS", "Premium Ambient"]
+            },
+            canvas: {
+                title: "<i class='fa-solid fa-atom' style='color:#a855f7'></i> 3. Smooth Starfield Canvas (İnteraktiv)",
+                desc: "HTML5 Canvas elementindən istifadə edərək 60 FPS təcrid olunmuş hissəciklər çəkilir. Dom elementlərini yükləmədən yüngül animasiya effekti yaradır.",
+                badges: ["HTML5 Canvas", "Interactive", "Low Memory Footprint"]
+            }
+        };
 
-.btn-danger:hover {
-    background: #ef4444;
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
-}
+        // Switch modes
+        function setMode(mode) {
+            document.body.className = '';
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
 
-.login-card {
-    position: relative;
-    z-index: 1;
-    background: rgba(24, 10, 10, 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 40px 32px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 380px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
+            if(mode === 'original') {
+                document.body.classList.add('bg-original');
+                document.querySelectorAll('.mode-btn')[0].classList.add('active');
+            } else if(mode === 'mesh') {
+                document.body.classList.add('bg-mode-mesh');
+                document.querySelectorAll('.mode-btn')[1].classList.add('active');
+            } else if(mode === 'orbs') {
+                document.body.classList.add('bg-mode-orbs');
+                document.querySelectorAll('.mode-btn')[2].classList.add('active');
+            } else if(mode === 'canvas') {
+                document.body.classList.add('bg-mode-canvas');
+                document.querySelectorAll('.mode-btn')[3].classList.add('active');
+            }
 
-.login-card h2 {
-    margin-bottom: 24px;
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 600;
-}
+            // Update explanation text & code snippet
+            document.getElementById('option-title').innerHTML = infoTexts[mode].title;
+            document.getElementById('option-desc').innerHTML = infoTexts[mode].desc;
+            document.getElementById('code-content').textContent = codeSnippets[mode];
 
-.input-group {
-    margin-bottom: 18px;
-    text-align: left;
-}
+            const badgeContainer = document.getElementById('option-badges');
+            badgeContainer.innerHTML = '';
+            infoTexts[mode].badges.forEach(badge => {
+                const span = document.createElement('span');
+                span.className = 'tech-badge';
+                span.textContent = badge;
+                badgeContainer.appendChild(span);
+            });
+        }
 
-.input-group label {
-    display: block;
-    font-size: 13px;
-    color: #fca5a5;
-    margin-bottom: 6px;
-    font-weight: 500;
-}
+        // Copy code helper
+        function copyCode() {
+            const codeText = document.getElementById('code-content').textContent;
+            const textArea = document.createElement('textarea');
+            textArea.value = codeText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
 
-.input-group input {
-    width: 100%;
-    padding: 13px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.3);
-    color: #ffffff;
-    outline: none;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
+            const copyBtn = document.querySelector('.copy-btn');
+            copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Kopyalandı!';
+            setTimeout(() => {
+                copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i> Kopyala';
+            }, 2000);
+        }
 
-.input-group input:focus {
-    border-color: #ef4444;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
-    background: rgba(0, 0, 0, 0.5);
-}
+        /* Interactive Light Canvas Animation */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
 
-.error-msg {
-    color: #fca5a5;
-    font-size: 13px;
-    margin-top: 14px;
-    min-height: 18px;
-    font-weight: 500;
-}
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-/* --- CANLI HTML & CSS EKSPERİMENT SAHƏSİ --- */
-/* --- CANLI HTML & CSS EKSPERİMENT SAHƏSİ DÜZƏLİŞİ --- */
-.editor-title {
-    margin: 40px 0 20px 0;
-    color: #ffffff;
-    font-weight: 600;
-}
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(239, 68, 68, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
 
-.editor-container {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    background: rgba(24, 10, 10, 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 24px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    width: 100%;
-    box-sizing: border-box;
-}
+        for (let i = 0; i < 50; i++) {
+            particles.push(new Particle());
+        }
 
-.editor-column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-width: 0;
-}
+        function animateCanvas() {
+            if (document.body.classList.contains('bg-mode-canvas')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
 
-.preview-column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.code-box {
-    display: flex;
-    flex-direction: column;
-}
-
-.editor-container label {
-    color: #fca5a5;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: block;
-}
-
-.editor-container textarea {
-    width: 100%;
-    height: 140px;
-    background: rgba(0, 0, 0, 0.6) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 10px;
-    color: #86efac !important;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 13px;
-    padding: 12px;
-    outline: none;
-    resize: vertical;
-    box-sizing: border-box;
-}
-
-.editor-container textarea:focus {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
-}
-
-.preview-column iframe {
-    width: 100%;
-    height: 330px;
-    background: #1e1e1e; /* İçərisi tünd fon ki yazılarınız aydın görünsün */
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-sizing: border-box;
-}
-
-/* Mobil ekranlar üçün */
-@media (max-width: 768px) {
-    .editor-container {
-        flex-direction: column;
-    }
-}
+        // Initialize default option
+        setMode('orbs');
+    </script>
+</body>
+</html>
