@@ -7,9 +7,18 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- PERFORMANSLI ARXA PLAN EFFEKTLƏRİ -->
+    <div class="bg-orbs" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+    <div class="bg-grid" aria-hidden="true"></div>
+
+    <!-- LOGIN KARTI -->
     <div class="login-card">
         <div class="logo-container">
-            <img src="OCKER2.png" height="200" alt="Logo">
+            <img src="OCKER2.png" alt="Logo" class="logo-img">
             <div class="logo-text"></div>
         </div>
 
@@ -29,8 +38,7 @@
         <p id="error-msg" class="error-msg"></p>
     </div>
 
-
-
+    <!-- FIREBASE İNTUQRA SİYYASI -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -72,8 +80,6 @@
                     errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
                 });
         });
-
-
     </script>
 </body>
 </html>
