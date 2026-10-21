@@ -8,6 +8,13 @@
 </head>
 <body>
 
+    <!-- PERFORMANSLI ARXA PLAN EFFEKTLƏRİ -->
+    <div class="bg-orbs" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+    <div class="bg-grid" aria-hidden="true"></div>
+
     <div class="dashboard-container">
         <header>
             <div class="logo-container" style="margin-bottom: 0;">
@@ -23,7 +30,6 @@
             </div>
         </header>
         
-
         <h2 style="margin-bottom: 24px; color: #ffffff; font-weight: 600;">Dərslikləriniz:</h2>
         
         <div class="courses-grid">
@@ -37,7 +43,8 @@
 
                 <div class="btn-group">
                     <button class="btn-primary" onclick="openFullscreen('pdf-frame-1')">Tam Ekran Oxu</button>
-                    <a href="cpp.pdf" download class="btn-primary btn-download">PDF Yüklə</a>
+                    <!-- Düzəliş: cpp.pdf əvəzinə HTML-1.pdf yazıldı -->
+                    <a href="HTML-1.pdf" download class="btn-primary btn-download" style="padding-top: 13px;">PDF Yüklə</a>
                 </div>
             </div>
         </div>
@@ -80,6 +87,62 @@ button {
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Məntiq və Funksiyalar -->
+    <script>
+        // 1. İstifadəçi adını localStorage-dən oxuyub göstərmək
+        const currentUser = localStorage.getItem("currentUser");
+        if (currentUser) {
+            document.getElementById("user-display").textContent = currentUser;
+        }
+
+        // 2. Çıxış düyməsi məntiqi
+        function logout() {
+            localStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        }
+
+        // 3. PDF-i tam ekranda açmaq funksiyası
+        function openFullscreen(iframeId) {
+            const iframe = document.getElementById(iframeId);
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.webkitRequestFullscreen) {
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) {
+                iframe.msRequestFullscreen();
+            }
+        }
+
+        // 4. Canlı HTML & CSS Editor Məntiqi
+        const htmlInput = document.getElementById("html-code");
+        const cssInput = document.getElementById("css-code");
+        const previewFrame = document.getElementById("live-preview");
+
+        function updatePreview() {
+            const htmlValue = htmlInput.value;
+            const cssValue = cssInput.value;
+            
+            const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            previewDoc.open();
+            previewDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>${cssValue}</style>
+                </head>
+                <body>
+                    ${htmlValue}
+                </body>
+                </html>
+            `);
+            previewDoc.close();
+        }
+
+        htmlInput.addEventListener("input", updatePreview);
+        cssInput.addEventListener("input", updatePreview);
+
+        // Səhifə açılan kimi ilkin nəticəni yüklə
+        window.addEventListener("DOMContentLoaded", updatePreview);
+    </script>
 </body>
 </html>
