@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <!-- PERFORMANSLI ARXA PLAN EFFEKTLƏRİ -->
+    <!-- Performanslı Arxa Plan Elementləri -->
     <div class="bg-orbs" aria-hidden="true">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -43,7 +43,6 @@
 
                 <div class="btn-group">
                     <button class="btn-primary" onclick="openFullscreen('pdf-frame-1')">Tam Ekran Oxu</button>
-                    <!-- Düzəliş: cpp.pdf əvəzinə HTML-1.pdf yazıldı -->
                     <a href="HTML-1.pdf" download class="btn-primary btn-download" style="padding-top: 13px;">PDF Yüklə</a>
                 </div>
             </div>
@@ -87,21 +86,21 @@ button {
         </div>
     </div>
 
-    <!-- Məntiq və Funksiyalar -->
+    <!-- Portal Məntiqi və Canlı Editor Scripti -->
     <script>
-        // 1. İstifadəçi adını localStorage-dən oxuyub göstərmək
+        // İstifadəçi adını yoxla
         const currentUser = localStorage.getItem("currentUser");
         if (currentUser) {
             document.getElementById("user-display").textContent = currentUser;
         }
 
-        // 2. Çıxış düyməsi məntiqi
+        // Çıxış funksiyası
         function logout() {
             localStorage.removeItem("currentUser");
             window.location.href = "index.html";
         }
 
-        // 3. PDF-i tam ekranda açmaq funksiyası
+        // Tam ekran funksiyası
         function openFullscreen(iframeId) {
             const iframe = document.getElementById(iframeId);
             if (iframe.requestFullscreen) {
@@ -113,7 +112,7 @@ button {
             }
         }
 
-        // 4. Canlı HTML & CSS Editor Məntiqi
+        // Canlı Preview Məntiqi
         const htmlInput = document.getElementById("html-code");
         const cssInput = document.getElementById("css-code");
         const previewFrame = document.getElementById("live-preview");
@@ -140,8 +139,6 @@ button {
 
         htmlInput.addEventListener("input", updatePreview);
         cssInput.addEventListener("input", updatePreview);
-
-        // Səhifə açılan kimi ilkin nəticəni yüklə
         window.addEventListener("DOMContentLoaded", updatePreview);
     </script>
 </body>
