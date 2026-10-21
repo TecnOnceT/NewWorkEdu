@@ -1,449 +1,400 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* --- UMUMİ TƏNZİMLƏMƏLƏR --- */
 * {
- margin: 0;
- padding: 0;
- box-sizing: border-box;
- font-family: 'Poppins', sans-serif;
- }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
 
- :root {
- --accent-red: #ef4444;
- --accent-red-hover: #f87171;
- --bg-card: rgba(24, 10, 10, 0.65);
- --border-glass: rgba(255, 255, 255, 0.12);
- }
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #ffffff;
+    background-color: #0b0202; /* Baza tünd fon */
+    position: relative;
+    overflow-x: hidden;
+}
 
- body {
- min-height: 100vh;
- color: #ffffff;
- position: relative;
- overflow-x: hidden;
- background-color: #0d0303;
- }
+/* --- PERFORMANSLI QASMAYAN ARXA PLAN EFFEKTLƏRİ (GPU) --- */
+.bg-orbs {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
 
- /* ==========================================================================
-    1. ORİJİNAL ARXA PLAN (Problematic - Repaint & Heavy CPU/GPU usage)
-    ========================================================================== */
- body.bg-original {
- background: linear-gradient(-45deg, #180505, #2d0b0b, #450a0a, #1a0505);
- background-size: 400% 400%;
- animation: gradientBG 12s ease infinite;
- }
- @keyframes gradientBG {
- 0% { background-position: 0% 50%; }
- 50% { background-position: 100% 50%; }
- 100% { background-position: 0% 50%; }
- }
- body.bg-original::before {
- content: "";
- position: fixed;
- top: 0; left: 0; width: 100%; height: 100%;
- background-image: radial-gradient(rgba(239, 68, 68, 0.2) 1px, transparent 1px);
- background-size: 40px 40px;
- opacity: 0.3;
- animation: moveDiagonal 12s linear infinite;
- pointer-events: none;
- z-index: 0;
- }
- @keyframes moveDiagonal {
- 0% { background-position: 320px 0px; }
- 100% { background-position: 0px 320px; }
- }
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+    opacity: 0.5;
+}
 
- /* ==========================================================================
-    2. SEÇİM 1: Modern Crimson Mesh + Glassmorphism (Statik / Ən Yüksək FPS)
-    ========================================================================== */
- .bg-layer-mesh {
- position: fixed;
- inset: 0;
- z-index: -2;
- display: none;
- background: 
-     radial-gradient(circle at 15% 20%, rgba(220, 38, 38, 0.28) 0%, transparent 45%),
-     radial-gradient(circle at 85% 75%, rgba(153, 27, 27, 0.25) 0%, transparent 50%),
-     radial-gradient(circle at 50% 50%, rgba(69, 10, 10, 0.6) 0%, #0a0202 100%);
- }
- .bg-layer-mesh::after {
- content: "";
- position: absolute;
- inset: 0;
- background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
- background-size: 32px 32px;
- opacity: 0.6;
- pointer-events: none;
- }
- body.bg-mode-mesh .bg-layer-mesh { display: block; }
+.orb-1 {
+    top: -10%; left: -10%;
+    width: 50vw; height: 50vw;
+    background: radial-gradient(circle, #ef4444 0%, rgba(220, 38, 38, 0) 70%);
+    animation: floatOrb1 16s ease-in-out infinite alternate;
+}
 
- /* ==========================================================================
-    3. SEÇİM 2: GPU Tərəfindən Sürətləndirilmiş Dairələr (Transform Animation)
-    ========================================================================== */
- .bg-layer-orbs {
- position: fixed;
- inset: 0;
- z-index: -2;
- overflow: hidden;
- background-color: #090202;
- display: none;
- }
- .orb {
- position: absolute;
- border-radius: 50%;
- filter: blur(80px);
- will-change: transform; /* GPU Layer Creation */
- opacity: 0.45;
- }
- .orb-1 {
- top: -10%; left: -10%;
- width: 50vw; height: 50vw;
- background: radial-gradient(circle, #dc2626 0%, rgba(185, 28, 28, 0) 70%);
- animation: floatOrb1 18s ease-in-out infinite alternate;
- }
- .orb-2 {
- bottom: -15%; right: -10%;
- width: 60vw; height: 60vw;
- background: radial-gradient(circle, #7f1d1d 0%, rgba(69, 10, 10, 0) 70%);
- animation: floatOrb2 22s ease-in-out infinite alternate;
- }
- .orb-3 {
- top: 40%; left: 40%;
- width: 35vw; height: 35vw;
- background: radial-gradient(circle, #ef4444 0%, rgba(220, 38, 38, 0) 70%);
- animation: floatOrb3 15s ease-in-out infinite alternate;
- }
- /* Yalnız transform istifadə olunur (Repaint baş vermir!) */
- @keyframes floatOrb1 {
- 0% { transform: translate3d(0, 0, 0) scale(1); }
- 100% { transform: translate3d(15vw, 10vh, 0) scale(1.2); }
- }
- @keyframes floatOrb2 {
- 0% { transform: translate3d(0, 0, 0) scale(1); }
- 100% { transform: translate3d(-12vw, -15vh, 0) scale(1.15); }
- }
- @keyframes floatOrb3 {
- 0% { transform: translate3d(-10vw, 5vh, 0) scale(0.9); }
- 100% { transform: translate3d(10vw, -10vh, 0) scale(1.1); }
- }
- body.bg-mode-orbs .bg-layer-orbs { display: block; }
+.orb-2 {
+    bottom: -15%; right: -10%;
+    width: 55vw; height: 55vw;
+    background: radial-gradient(circle, #991b1b 0%, rgba(69, 10, 10, 0) 70%);
+    animation: floatOrb2 20s ease-in-out infinite alternate;
+}
 
- /* ==========================================================================
-    4. SEÇİM 3: İnteraktiv Yüngül Canvas Particle
-    ========================================================================== */
- #bg-canvas {
- position: fixed;
- inset: 0;
- z-index: -2;
- background: #080202;
- display: none;
- }
- body.bg-mode-canvas #bg-canvas { display: block; }
+/* GPU tərəfindən idarə olunan translate3d hərəkəti (0% Repaint) */
+@keyframes floatOrb1 {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(12vw, 10vh, 0) scale(1.15); }
+}
 
- /* ==========================================================================
-    Arayüz vərdişləri və Əsas Tərtibat
-    ========================================================================== */
- .wrapper {
- position: relative;
- z-index: 1;
- max-width: 1200px;
- margin: 0 auto;
- padding: 24px;
- }
+@keyframes floatOrb2 {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(-10vw, -12vh, 0) scale(1.1); }
+}
 
- /* Top Nav Control Bar */
- .control-panel {
- background: rgba(20, 8, 8, 0.75);
- backdrop-filter: blur(16px);
- -webkit-backdrop-filter: blur(16px);
- border: 1px solid var(--border-glass);
- border-radius: 16px;
- padding: 16px 24px;
- margin-bottom: 28px;
- box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
- }
+/* İncə Nöqtəli Şəbəkə Overlay */
+.bg-grid {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
 
- .control-header {
- display: flex;
- justify-content: space-between;
- align-items: center;
- flex-wrap: wrap;
- gap: 16px;
- margin-bottom: 16px;
- }
+/* --- LOGO VƏ BAŞLIQ --- */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
 
- .control-title {
- display: flex;
- align-items: center;
- gap: 10px;
- font-size: 18px;
- font-weight: 700;
- color: #fca5a5;
- }
+.logo-img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+    animation: pulseLogo 2s infinite alternate;
+}
 
- .fps-badge {
- background: rgba(0, 0, 0, 0.5);
- padding: 6px 14px;
- border-radius: 20px;
- border: 1px solid rgba(255, 255, 255, 0.1);
- font-family: 'JetBrains Mono', monospace;
- font-size: 13px;
- display: flex;
- align-items: center;
- gap: 8px;
- }
- .fps-dot {
- width: 8px;
- height: 8px;
- border-radius: 50%;
- background: #22c55e;
- box-shadow: 0 0 8px #22c55e;
- }
+.logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(to right, #ffffff, #fca5a5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
- .mode-buttons {
- display: grid;
- grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
- gap: 12px;
- }
+@keyframes pulseLogo {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.08); }
+}
 
- .mode-btn {
- background: rgba(0, 0, 0, 0.4);
- border: 1px solid var(--border-glass);
- color: #d1d5db;
- padding: 12px 16px;
- border-radius: 12px;
- cursor: pointer;
- text-align: left;
- transition: all 0.25s ease;
- display: flex;
- flex-direction: column;
- gap: 4px;
- }
+/* --- GİRİŞ KARTI (index.html) --- */
+.login-card {
+    position: relative;
+    z-index: 1;
+    background: rgba(24, 10, 10, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 40px 32px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
 
- .mode-btn:hover {
- border-color: rgba(239, 68, 68, 0.5);
- background: rgba(239, 68, 68, 0.1);
- color: #fff;
- }
+.login-card h2 {
+    margin-bottom: 24px;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+}
 
- .mode-btn.active {
- background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(185, 28, 28, 0.35));
- border-color: #ef4444;
- color: #ffffff;
- box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
- }
+.input-group {
+    margin-bottom: 18px;
+    text-align: left;
+}
 
- .mode-btn .btn-title {
- font-weight: 600;
- font-size: 14px;
- display: flex;
- align-items: center;
- gap: 8px;
- }
+.input-group label {
+    display: block;
+    font-size: 13px;
+    color: #fca5a5;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
 
- .mode-btn .btn-desc {
- font-size: 11px;
- color: #9ca3af;
- }
+.input-group input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #ffffff;
+    outline: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
 
- /* Comparison Grid */
- .dashboard-grid {
- display: grid;
- grid-template-columns: 360px 1fr;
- gap: 24px;
- }
+.input-group input:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    background: rgba(0, 0, 0, 0.6);
+}
 
- @media (max-width: 960px) {
- .dashboard-grid {
-     grid-template-columns: 1fr;
- }
- }
+.error-msg {
+    color: #fca5a5;
+    font-size: 13px;
+    margin-top: 14px;
+    min-height: 18px;
+    font-weight: 500;
+}
 
- /* User Login Card Preview */
- .login-card {
- background: rgba(24, 10, 10, 0.7);
- backdrop-filter: blur(16px);
- -webkit-backdrop-filter: blur(16px);
- padding: 32px 28px;
- border-radius: 20px;
- border: 1px solid var(--border-glass);
- box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
- text-align: center;
- height: fit-content;
- }
+/* --- DASHBOARD VƏ KARTLAR (second.html) --- */
+.dashboard-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1100px;
+}
 
- .logo-container {
- display: flex;
- align-items: center;
- justify-content: center;
- gap: 12px;
- margin-bottom: 20px;
- }
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(24, 10, 10, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 20px 28px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
 
- .logo-icon {
- font-size: 32px;
- color: var(--accent-red);
- filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.8));
- animation: pulseLogo 2s infinite alternate ease-in-out;
- }
+.courses-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    width: 100%;
+}
 
- @keyframes pulseLogo {
- 0% { transform: scale(1); }
- 100% { transform: scale(1.08); }
- }
+.course-card {
+    background: rgba(24, 10, 10, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    width: 100%;
+}
 
- .logo-text {
- font-size: 22px;
- font-weight: 700;
- background: linear-gradient(to right, #ffffff, #fca5a5);
- -webkit-background-clip: text;
- -webkit-text-fill-color: transparent;
- }
+.course-card:hover {
+    transform: translateY(-4px);
+    border-color: #f87171;
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.25);
+}
 
- .login-card h2 {
- margin-bottom: 20px;
- font-size: 18px;
- font-weight: 600;
- }
+.course-card h3 {
+    color: #fca5a5;
+    margin-bottom: 12px;
+}
 
- .input-group {
- margin-bottom: 16px;
- text-align: left;
- }
+.course-card p {
+    color: #e5e7eb;
+    font-size: 14px;
+    line-height: 1.6;
+}
 
- .input-group label {
- display: block;
- font-size: 12px;
- color: #fca5a5;
- margin-bottom: 6px;
- font-weight: 500;
- }
+/* --- PDF OXUYUCU STİLLƏRİ --- */
+.pdf-viewer-container {
+    width: 100%;
+    height: 600px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 18px 0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.5);
+}
 
- .input-group input {
- width: 100%;
- padding: 12px 14px;
- border: 1px solid var(--border-glass);
- border-radius: 10px;
- background: rgba(0, 0, 0, 0.4);
- color: #ffffff;
- outline: none;
- font-size: 14px;
- transition: all 0.3s ease;
- }
+.pdf-viewer-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
 
- .input-group input:focus {
- border-color: var(--accent-red);
- box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
- background: rgba(0, 0, 0, 0.6);
- }
+/* --- DÜYMƏLƏR VƏ QRUPLAŞDIRMALAR --- */
+.btn-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
 
- .btn-primary {
- width: 100%;
- padding: 12px;
- background: linear-gradient(135deg, #ef4444, #dc2626);
- border: none;
- color: #ffffff;
- font-weight: 600;
- border-radius: 10px;
- cursor: pointer;
- font-size: 14px;
- transition: all 0.3s ease;
- box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
- }
+.btn-group .btn-primary {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
 
- .btn-primary:hover {
- background: linear-gradient(135deg, #f87171, #ef4444);
- transform: translateY(-2px);
- box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
- }
+.btn-download {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    text-align: center;
+}
 
- /* Code Explanations Box */
- .info-card {
- background: rgba(20, 8, 8, 0.75);
- backdrop-filter: blur(16px);
- -webkit-backdrop-filter: blur(16px);
- border: 1px solid var(--border-glass);
- border-radius: 20px;
- padding: 24px;
- box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
- }
+.btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+}
 
- .info-card h3 {
- color: #fca5a5;
- font-size: 18px;
- margin-bottom: 12px;
- display: flex;
- align-items: center;
- gap: 10px;
- }
+.btn-primary:hover {
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+}
 
- .explanation-text {
- color: #d1d5db;
- font-size: 13.5px;
- line-height: 1.6;
- margin-bottom: 20px;
- }
+.btn-danger {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #b91c1c, #991b1b);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
 
- .badge-list {
- display: flex;
- gap: 10px;
- flex-wrap: wrap;
- margin-bottom: 18px;
- }
+.btn-danger:hover {
+    background: #ef4444;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
 
- .tech-badge {
- font-size: 11px;
- padding: 4px 10px;
- border-radius: 6px;
- background: rgba(239, 68, 68, 0.15);
- color: #fca5a5;
- border: 1px solid rgba(239, 68, 68, 0.3);
- font-weight: 600;
- }
+/* --- CANLI HTML & CSS EDITOR STİLLƏRİ --- */
+.editor-title {
+    margin: 40px 0 20px 0;
+    color: #ffffff;
+    font-weight: 600;
+}
 
- /* Code View Container */
- .code-block {
- position: relative;
- background: #0d0404;
- border: 1px solid rgba(255, 255, 255, 0.1);
- border-radius: 12px;
- overflow: hidden;
- }
+.editor-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    background: rgba(24, 10, 10, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    width: 100%;
+    box-sizing: border-box;
+}
 
- .code-header {
- background: rgba(255, 255, 255, 0.05);
- padding: 10px 16px;
- font-size: 12px;
- color: #9ca3af;
- display: flex;
- justify-content: space-between;
- align-items: center;
- border-bottom: 1px solid rgba(255, 255, 255, 0.05);
- }
+.editor-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
 
- .copy-btn {
- background: rgba(239, 68, 68, 0.2);
- border: 1px solid rgba(239, 68, 68, 0.4);
- color: #fca5a5;
- padding: 4px 10px;
- border-radius: 6px;
- cursor: pointer;
- font-size: 11px;
- transition: all 0.2s;
- }
+.preview-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
 
- .copy-btn:hover {
- background: rgba(239, 68, 68, 0.4);
- color: #fff;
- }
+.code-box {
+    display: flex;
+    flex-direction: column;
+}
 
- pre {
- padding: 16px;
- overflow-x: auto;
- font-family: 'JetBrains Mono', monospace;
- font-size: 12px;
- line-height: 1.5;
- color: #e5e7eb;
- max-height: 380px;
- }
+.editor-container label, 
+.preview-column label {
+    color: #fca5a5;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+}
 
- .code-comment { color: #6b7280; }
- .code-selector { color: #f87171; }
- .code-prop { color: #93c5fd; }
- .code-val { color: #fde047; }
+.editor-container textarea {
+    width: 100%;
+    height: 140px;
+    background: rgba(0, 0, 0, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 10px;
+    color: #86efac !important;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    padding: 12px;
+    outline: none;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.editor-container textarea:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+.preview-column iframe {
+    width: 100%;
+    height: 330px;
+    background: #1e1e1e;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-sizing: border-box;
+}
+
+/* --- MOBİL UYĞUNLUQ (RESPONSIVE) --- */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .editor-container {
+        flex-direction: column;
+    }
+
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .pdf-viewer-container {
+        height: 400px;
+    }
+}
