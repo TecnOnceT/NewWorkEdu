@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-/* --- UMUMİ TƏNZİMLƏMƏLƏR --- */
 * {
     margin: 0;
     padding: 0;
@@ -15,12 +14,11 @@ body {
     align-items: center;
     padding: 20px;
     color: #ffffff;
-    background-color: #0b0202; /* Baza tünd fon */
+    background-color: #0b0202;
     position: relative;
     overflow-x: hidden;
 }
 
-/* --- PERFORMANSLI QASMAYAN ARXA PLAN EFFEKTLƏRİ (GPU) --- */
 .bg-orbs {
     position: fixed;
     inset: 0;
@@ -51,7 +49,6 @@ body {
     animation: floatOrb2 20s ease-in-out infinite alternate;
 }
 
-/* GPU tərəfindən idarə olunan translate3d hərəkəti (0% Repaint) */
 @keyframes floatOrb1 {
     0% { transform: translate3d(0, 0, 0) scale(1); }
     100% { transform: translate3d(12vw, 10vh, 0) scale(1.15); }
@@ -62,7 +59,6 @@ body {
     100% { transform: translate3d(-10vw, -12vh, 0) scale(1.1); }
 }
 
-/* İncə Nöqtəli Şəbəkə Overlay */
 .bg-grid {
     position: fixed;
     inset: 0;
@@ -72,7 +68,6 @@ body {
     pointer-events: none;
 }
 
-/* --- LOGO VƏ BAŞLIQ --- */
 .logo-container {
     display: flex;
     align-items: center;
@@ -103,7 +98,6 @@ body {
     100% { transform: scale(1.08); }
 }
 
-/* --- GİRİŞ KARTI (index.html) --- */
 .login-card {
     position: relative;
     z-index: 1;
@@ -165,7 +159,6 @@ body {
     font-weight: 500;
 }
 
-/* --- DASHBOARD VƏ KARTLAR (second.html) --- */
 .dashboard-container {
     position: relative;
     z-index: 1;
@@ -221,7 +214,6 @@ header {
     line-height: 1.6;
 }
 
-/* --- PDF OXUYUCU STİLLƏRİ --- */
 .pdf-viewer-container {
     width: 100%;
     height: 600px;
@@ -238,7 +230,6 @@ header {
     border: none;
 }
 
-/* --- DÜYMƏLƏR VƏ QRUPLAŞDIRMALAR --- */
 .btn-group {
     display: flex;
     gap: 12px;
@@ -299,7 +290,6 @@ header {
     box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
 }
 
-/* --- CANLI HTML & CSS EDITOR STİLLƏRİ --- */
 .editor-title {
     margin: 40px 0 20px 0;
     color: #ffffff;
@@ -378,7 +368,6 @@ header {
     box-sizing: border-box;
 }
 
-/* --- MOBİL UYĞUNLUQ (RESPONSIVE) --- */
 @media (max-width: 768px) {
     header {
         flex-direction: column;
