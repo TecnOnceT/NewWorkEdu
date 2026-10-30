@@ -8,7 +8,6 @@
 </head>
 <body>
 
-    <!-- Performanslı Arxa Plan Elementləri -->
     <div class="bg-orbs" aria-hidden="true">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -62,20 +61,20 @@
                 <div class="code-box">
                     <label for="css-code">CSS Kodu:</label>
                     <textarea id="css-code" spellcheck="false">h1 {
-  color: #fca5a5;
-  font-family: sans-serif;
-}
-p {
-  color: #ffffff;
-}
-button {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}</textarea>
+                          color: #fca5a5;
+                          font-family: sans-serif;
+                        }
+                        p {
+                          color: #ffffff;
+                        }
+                        button {
+                          background: #ef4444;
+                          color: white;
+                          border: none;
+                          padding: 8px 16px;
+                          border-radius: 6px;
+                          cursor: pointer;
+                        }</textarea>
                 </div>
             </div>
 
@@ -86,21 +85,17 @@ button {
         </div>
     </div>
 
-    <!-- Portal Məntiqi və Canlı Editor Scripti -->
     <script>
-        // İstifadəçi adını yoxla
         const currentUser = localStorage.getItem("currentUser");
         if (currentUser) {
             document.getElementById("user-display").textContent = currentUser;
         }
 
-        // Çıxış funksiyası
         function logout() {
             localStorage.removeItem("currentUser");
             window.location.href = "index.html";
         }
 
-        // Tam ekran funksiyası
         function openFullscreen(iframeId) {
             const iframe = document.getElementById(iframeId);
             if (iframe.requestFullscreen) {
@@ -112,7 +107,6 @@ button {
             }
         }
 
-        // Canlı Preview Məntiqi
         const htmlInput = document.getElementById("html-code");
         const cssInput = document.getElementById("css-code");
         const previewFrame = document.getElementById("live-preview");
