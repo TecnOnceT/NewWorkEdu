@@ -91,17 +91,16 @@ body {
     height: 45px;
     object-fit: contain;
     filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
-
+    transform: translateZ(0);
     will-change: transform;
-    animation: pulseLogo 2s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
+    animation: pulseLogo 2.5s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
 }
-
 @keyframes pulseLogo {
     0% {
-        transform: scale3d(1, 1, 1);
+        transform: scale(1) translateZ(0);
     }
     100% {
-        transform: scale3d(1.08, 1.08, 1);
+        transform: scale(1.06) translateZ(0);
     }
 }
 
