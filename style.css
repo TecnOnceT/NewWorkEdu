@@ -72,7 +72,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1px;
+    gap: 12px;
     margin-bottom: 20px;
 }
 
@@ -374,15 +374,12 @@ header {
         gap: 15px;
         text-align: center;
     }
-    
     .editor-container {
         flex-direction: column;
     }
-
     .btn-group {
         flex-direction: column;
     }
-    
     .pdf-viewer-container {
         height: 400px;
     }
