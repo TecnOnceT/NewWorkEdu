@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             signInWithEmailAndPassword(auth, formattedEmail, passInput)
                 .then(() => {
-                    localStorage.setItem("currentUser", userInput);
+                    localStorage.set("currentUser", userInput);
                     window.location.href = "second.html";
                 })
                 .catch((error) => {
@@ -89,23 +89,24 @@ function createFallingLogos() {
     const totalLogos = 20;
 
     for (let i = 0; i < totalLogos; i++) {
-        const item = document.createElement("div");
-        item.className = "falling-logo";
+        const  = document.createElement("div");
+        .className = "falling-logo";
 
         const randomLogo = logoFiles[Math.floor(Math.random() * logoFiles.length)];
         const img = document.createElement("img");
         img.src = randomLogo;
         
         img.onerror = function() {
-            item.style.display = "none";
+            .style.display = "none";
         };
 
         item.appendChild(img);
 
         item.style.left = `${Math.random() * 95}%`;
         const duration = Math.random() * 8 + 6;
-        const delay = Math.random() * 5;
-
+        
+        const delay = -(Math.random() * duration); 
+        
         item.style.animationDuration = `${duration}s`;
         item.style.animationDelay = `${delay}s`;
 
