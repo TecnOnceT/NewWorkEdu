@@ -27,6 +27,7 @@ function initPhysicsLogos() {
 
     const engine = Engine.create();
     engine.world.gravity.y = 0.4; 
+
     const render = Render.create({
         element: container,
         engine: engine,
@@ -43,35 +44,13 @@ function initPhysicsLogos() {
     Runner.run(runner, engine);
 
     const logoFiles = [
-        "logos/APlus.svg",
-        "logos/CSharp.svg",
-        "logos/Erlang.svg",
-        "logos/Fortran.svg",
-        "logos/FStar.svg",
-        "logos/Haskell.svg",
-        "logos/Java.svg",
-        "logos/Julia.svg",
-        "logos/Kotlin.svg",
-        "logos/Lua.svg",
-        "logos/Mathics.svg",
-        "logos/Oberon.svg",
-        "logos/Perl.svg",
-        "logos/PHP.svg",
-        "logos/Python.svg",
-        "logos/QB64.svg",
-        "logos/Racket.svg",
-        "logos/Rust.svg",
-        "logos/Wax.svg",
-        "logos/WebAssembly.svg",
-        "logos/1.png",
-        "logos/CPP.png",
-        "logos/Delphi.png",
-        "logos/JS.png",
-        "logos/Oxygene.png",
-        "logos/Pyret.png",
-        "logos/Rust.png",
-
-        "logos/OCKER2.png"
+        "logos/APlus.svg", "logos/CSharp.svg", "logos/Erlang.svg", "logos/Fortran.svg",
+        "logos/FStar.svg", "logos/Haskell.svg", "logos/Java.svg", "logos/Julia.svg",
+        "logos/Kotlin.svg", "logos/Lua.svg", "logos/Mathics.svg", "logos/Oberon.svg",
+        "logos/Perl.svg", "logos/PHP.svg", "logos/Python.svg", "logos/QB64.svg",
+        "logos/Racket.svg", "logos/Rust.svg", "logos/Wax.svg", "logos/WebAssembly.svg",
+        "logos/1.png", "logos/CPP.png", "logos/Delphi.png", "logos/JS.png",
+        "logos/Oxygene.png", "logos/Pyret.png", "logos/Rust.png", "logos/OCKER2.png"
     ];
 
     function dropLogo() {
@@ -92,17 +71,20 @@ function initPhysicsLogos() {
         });
 
         Composite.add(engine.world, logoBody);
-
-        Events.on(engine, "afterUpdate", function () {
-            if (logoBody.position.y > window.innerHeight + 100) {
-                Composite.remove(engine.world, logoBody);
-            }
-        });
     }
 
     setInterval(dropLogo, 800);
 
-    const mouse = Mouse.create(document.body);
+    Events.on(engine, "afterUpdate", function () {
+        const bodies = Composite.allBodies(engine.world);
+        bodies.forEach(body => {
+            if (!body.isStatic && body.position.y > window.innerHeight + 100) {
+                Composite.remove(engine.world, body);
+            }
+        });
+    });
+
+    const mouse = Mouse.create(render.canvas);
     const mouseConstraint = MouseConstraint.create(engine, {
         mouse: mouse,
         constraint: {
