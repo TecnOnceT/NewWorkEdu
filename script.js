@@ -90,14 +90,14 @@ function createFallingLogos() {
 
     for (let i = 0; i < totalLogos; i++) {
         const item = document.createElement("div");
-        .className = "falling-logo";
+        item.className = "falling-logo";
 
         const randomLogo = logoFiles[Math.floor(Math.random() * logoFiles.length)];
         const img = document.createElement("img");
         img.src = randomLogo;
         
         img.onerror = function() {
-            .style.display = "none";
+            item.style.display = "none";
         };
 
         item.appendChild(img);
