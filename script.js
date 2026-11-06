@@ -1,3 +1,19 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDzfpUCfUJd4VNR_UfrR3BhQ8ZCV5jZsP8",
+  authDomain: "neworkaccountprojet.firebaseapp.com",
+  projectId: "neworkaccountprojet",
+  storageBucket: "neworkaccountprojet.firebasestorage.app",
+  messagingSenderId: "962982050109",
+  appId: "1:962982050109:web:6886bb8c095a6f28a16d54",
+  measurementId: "G-RKRB3JEJ4G"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
 document.addEventListener("DOMContentLoaded", function () {
     initPhysicsLogos();
 
@@ -16,6 +32,35 @@ document.addEventListener("DOMContentLoaded", function () {
     if (htmlCode && cssCode) {
         htmlCode.addEventListener("input", updatePreview);
         cssCode.addEventListener("input", updatePreview);
+    }
+
+    const loginBtn = document.getElementById("login-btn");
+    if (loginBtn) {
+        localStorage.removeItem("currentUser");
+
+        loginBtn.addEventListener("click", () => {
+            const userInput = document.getElementById("username").value.trim();
+            const passInput = document.getElementById("password").value.trim();
+            const errorMsg = document.getElementById("error-msg");
+
+            if (!userInput || !passInput) {
+                if (errorMsg) errorMsg.textContent = "Zəhmət olmasa bütün xanaları doldurun!";
+                return;
+            }
+
+            if (errorMsg) errorMsg.textContent = "Yoxlanılır...";
+            const formattedEmail = `${userInput}@nework.edu`;
+
+            signInWithEmailAndPassword(auth, formattedEmail, passInput)
+                .then(() => {
+                    localStorage.setItem("currentUser", userInput);
+                    window.location.href = "second.html";
+                })
+                .catch((error) => {
+                    console.error("Firebase Hatası:", error);
+                    if (errorMsg) errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
+                });
+        });
     }
 });
 
@@ -101,12 +146,12 @@ function initPhysicsLogos() {
     });
 }
 
-function logout() {
+window.logout = function() {
     localStorage.removeItem("currentUser");
     window.location.href = "index.html";
-}
+};
 
-function openFullscreen(iframeId) {
+window.openFullscreen = function(iframeId) {
     const iframe = document.getElementById(iframeId);
     if (!iframe) return;
 
@@ -117,7 +162,7 @@ function openFullscreen(iframeId) {
     } else if (iframe.msRequestFullscreen) { 
         iframe.msRequestFullscreen();
     }
-}
+};
 
 function updatePreview() {
     const htmlCode = document.getElementById("html-code");
