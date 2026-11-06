@@ -61,7 +61,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Arka planda süzülen logolar
 function createFallingLogos() {
     const container = document.getElementById("bgShapes");
     if (!container) return;
@@ -96,4 +95,48 @@ function createFallingLogos() {
         const delay = Math.random() * 5;
 
         item.style.animationDuration = `${duration}s`;
-        item.style.animationDelay
+        item.style.animationDelay = `${delay}s`;
+
+        container.appendChild(item);
+    }
+}
+
+window.logout = function() {
+    localStorage.removeItem("currentUser");
+    window.location.href = "index.html";
+};
+
+window.openFullscreen = function(iframeId) {
+    const iframe = document.getElementById(iframeId);
+    if (!iframe) return;
+
+    if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+    } else if (iframe.webkitRequestFullscreen) {
+        iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) {
+        iframe.msRequestFullscreen();
+    }
+};
+
+function updatePreview() {
+    const htmlCode = document.getElementById("html-code");
+    const cssCode = document.getElementById("css-code");
+    const previewFrame = document.getElementById("live-preview");
+
+    if (!htmlCode || !cssCode || !previewFrame) return;
+
+    const htmlValue = htmlCode.value;
+    const cssValue = cssCode.value;
+
+    const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+    previewDoc.open();
+    previewDoc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head><style>${cssValue}</style></head>
+        <body>${htmlValue}</body>
+        </html>
+    `);
+    previewDoc.close();
+}
