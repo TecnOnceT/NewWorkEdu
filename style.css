@@ -30,8 +30,8 @@ body {
 .falling-logo {
     position: absolute;
     top: -60px;
-    width: 38px;  
-    height: 38px;
+    width: 64px;  
+    height: 64px;
     animation: fallAndSpin linear infinite;
     opacity: 0.65;
 }
