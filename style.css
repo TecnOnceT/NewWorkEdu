@@ -30,11 +30,11 @@ body {
 .falling-logo {
     position: absolute;
     top: -160px;
-    width: 72px;  /* Loqonun ölçüsünü bir az böyüттük (64px -> 72px) */
+    width: 72px;
     height: 72px;
     animation: fallAndSpin linear infinite;
-    opacity: 0.9; /* Şəffaflığı artırdıq (0.65-dən 0.9-a) ki, daha qırmızı/aydın görünsün */
-    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6)); /* Loqoların ətrafına qırmızı parıltı əlavə etdik */
+    opacity: 0.9;
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6));
 }
 
 .falling-logo img {
@@ -50,10 +50,10 @@ body {
         opacity: 0;
     }
     15% {
-        opacity: 0.9; /* Görünmə sürətini artırdıq */
+        opacity: 0.9;
     }
     85% {
-        opacity: 0.9; /* Ekranda qalma müddətində parlaq qalsın */
+        opacity: 0.9;
     }
     100% {
         transform: translateY(120vh) rotate(360deg);
