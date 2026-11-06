@@ -19,12 +19,16 @@ body {
     overflow-x: hidden;
 }
 
-.bg-shapes {
+#bgShapes {
     position: fixed;
     inset: 0;
     z-index: 0;
-    overflow: hidden;
     pointer-events: none;
+}
+
+#bgShapes canvas {
+    width: 100%;
+    height: 100%;
 }
 
 .shape {
@@ -37,7 +41,6 @@ body {
     animation: fallAnimation linear infinite;
 }
 
-/* Şekil Türleri */
 .shape.square {
     border-radius: 4px;
 }
