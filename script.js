@@ -30,7 +30,7 @@ function createGeometricShapes() {
     }
 
     const shapeTypes = ["square", "circle", "triangle", "diamond"];
-    const totalShapes = 25; 
+    const totalShapes = 200; 
 
     for (let i = 0; i < totalShapes; i++) {
         const shape = document.createElement("div");
@@ -38,21 +38,17 @@ function createGeometricShapes() {
         
         shape.classList.add("shape", randomType);
 
-        // Rastgele boyut (20px - 60px)
         const size = Math.floor(Math.random() * 40) + 20;
         if (randomType !== "triangle") {
             shape.style.width = `${size}px`;
             shape.style.height = `${size}px`;
         }
 
-        // Rastgele yatay konum (%0 - %100)
         shape.style.left = `${Math.random() * 100}%`;
 
-        // Rastgele düşme süresi (6s - 18s)
         const duration = Math.random() * 12 + 6;
         shape.style.animationDuration = `${duration}s`;
 
-        // Rastgele başlama gecikmesi (0s - 10s)
         const delay = Math.random() * 10;
         shape.style.animationDelay = `${delay}s`;
 
