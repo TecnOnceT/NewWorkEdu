@@ -11,7 +11,6 @@ const firebaseConfig = {
     measurementId: "G-RKRB3JEJ4G"
 };
 
-// Firebase tətbiqini təhlükəsiz başlatma
 let auth = null;
 try {
     const app = initializeApp(firebaseConfig);
@@ -21,17 +20,14 @@ try {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    // 1. Arxa plan loqolarını işə sal
     createFallingLogos();
 
-    // 2. İstifadəçi adını yoxla və göstər (second.html üçün)
     const currentUser = localStorage.getItem("currentUser");
     const userDisplay = document.getElementById("user-display");
     if (currentUser && userDisplay) {
         userDisplay.textContent = currentUser;
     }
 
-    // 3. Canlı kod önizləməsini işə sal (second.html üçün)
     const htmlCode = document.getElementById("html-code");
     const cssCode = document.getElementById("css-code");
 
@@ -41,7 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
         cssCode.addEventListener("input", updatePreview);
     }
 
-    // 4. Giriş düyməsi işləmi (index.html üçün)
     const loginBtn = document.getElementById("login-btn");
     if (loginBtn) {
         loginBtn.addEventListener("click", () => {
@@ -77,7 +72,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Arxa planda nizamlı və sabit ölçülü loqoların süzülməsi
 function createFallingLogos() {
     const container = document.getElementById("bgShapes");
     if (!container) return;
@@ -87,9 +81,9 @@ function createFallingLogos() {
         "logos/FStar.svg", "logos/Haskell.svg", "logos/Java.svg", "logos/Julia.svg",
         "logos/Kotlin.svg", "logos/Lua.svg", "logos/Mathics.svg", "logos/Oberon.svg",
         "logos/Perl.svg", "logos/PHP.svg", "logos/Python.svg", "logos/QB64.svg",
-        "logos/Racket.svg", "logos/Rust.svg", "logos/Wax.svg", "logos/WebAssembly.svg",
-        "logos/1.png", "logos/CPP.png", "logos/Delphi.png", "logos/JS.png",
-        "logos/Oxygene.png", "logos/Pyret.png", "logos/Rust.png", "logos/OCKER2.png"
+        "logos/Racket.svg", "Rust.svg", "logos/Wax.svg", "logos/WebAssembly.svg",
+        "logos/1.png", "CPP.png", "logos/Delphi.png", "logos/JS.png",
+        "logos/Oxygene.png", "logos/Pyret.png", "Rust.png", "logos/OCKER2.png"
     ];
 
     const totalLogos = 20;
