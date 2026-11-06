@@ -41,28 +41,6 @@ body {
     animation: fallAnimation linear infinite;
 }
 
-.shape.square {
-    border-radius: 4px;
-}
-
-.shape.circle {
-    border-radius: 50%;
-}
-
-.shape.triangle {
-    width: 0 !important;
-    height: 0 !important;
-    background: transparent !important;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-bottom: 35px solid rgba(239, 68, 68, 0.35);
-    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.3));
-}
-
-.shape.diamond {
-    transform: rotate(45deg);
-    border-radius: 2px;
-}
 
 @keyframes fallAnimation {
     0% {
