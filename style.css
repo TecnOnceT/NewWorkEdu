@@ -19,7 +19,7 @@ body {
     overflow-x: hidden;
 }
 
-.bg-orbs {
+.bg-shapes {
     position: fixed;
     inset: 0;
     z-index: 0;
@@ -27,37 +27,57 @@ body {
     pointer-events: none;
 }
 
-.orb {
+.shape {
     position: absolute;
+    top: -100px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(153, 27, 27, 0.15));
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    backdrop-filter: blur(2px);
+    will-change: transform, opacity;
+    animation: fallAnimation linear infinite;
+}
+
+/* Şekil Türleri */
+.shape.square {
+    border-radius: 4px;
+}
+
+.shape.circle {
     border-radius: 50%;
-    filter: blur(90px);
-    will-change: transform;
-    opacity: 0.5;
 }
 
-.orb-1 {
-    top: -10%; left: -10%;
-    width: 50vw; height: 50vw;
-    background: radial-gradient(circle, #ef4444 0%, rgba(220, 38, 38, 0) 70%);
-    animation: floatOrb1 16s ease-in-out infinite alternate;
+.shape.triangle {
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 35px solid rgba(239, 68, 68, 0.35);
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.3));
 }
 
-.orb-2 {
-    bottom: -15%; right: -10%;
-    width: 55vw; height: 55vw;
-    background: radial-gradient(circle, #991b1b 0%, rgba(69, 10, 10, 0) 70%);
-    animation: floatOrb2 20s ease-in-out infinite alternate;
+.shape.diamond {
+    transform: rotate(45deg);
+    border-radius: 2px;
 }
 
-@keyframes floatOrb1 {
-    0% { transform: translate3d(0, 0, 0) scale(1); }
-    100% { transform: translate3d(12vw, 10vh, 0) scale(1.15); }
+@keyframes fallAnimation {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(115vh) rotate(360deg) scale(1.1);
+        opacity: 0;
+    }
 }
 
-@keyframes floatOrb2 {
-    0% { transform: translate3d(0, 0, 0) scale(1); }
-    100% { transform: translate3d(-10vw, -12vh, 0) scale(1.1); }
-}
 
 .bg-grid {
     position: fixed;
@@ -75,7 +95,6 @@ body {
     gap: 12px;
     margin-bottom: 20px;
 }
-
 
 .logo-text {
     font-size: 24px;
