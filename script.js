@@ -15,14 +15,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", function () {
+    // 1. Arka plan logolarını başlat
     createFallingLogos();
 
+    // 2. Kullanıcı adını göster (second.html için)
     const currentUser = localStorage.getItem("currentUser");
     const userDisplay = document.getElementById("user-display");
     if (currentUser && userDisplay) {
         userDisplay.textContent = currentUser;
     }
 
+    // 3. Kod önizlemeyi çalıştır (second.html için)
     updatePreview();
 
     const htmlCode = document.getElementById("html-code");
@@ -33,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cssCode.addEventListener("input", updatePreview);
     }
 
+    // 4. Firebase Login İşlemi (index.html için)
     const loginBtn = document.getElementById("login-btn");
     if (loginBtn) {
         loginBtn.addEventListener("click", () => {
@@ -61,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+// Arka planda süzülen sabit boyutlu logolar
 function createFallingLogos() {
     const container = document.getElementById("bgShapes");
     if (!container) return;
@@ -84,9 +89,6 @@ function createFallingLogos() {
         const randomLogo = logoFiles[Math.floor(Math.random() * logoFiles.length)];
         const img = document.createElement("img");
         img.src = randomLogo;
-        img.onerror = function() {
-            this.style.display = "none";
-        };
         
         item.appendChild(img);
 
