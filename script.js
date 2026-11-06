@@ -21,16 +21,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function createGeometricShapes() {
     let container = document.getElementById("bgShapes");
-    
-    if (!container) {
-        container = document.createElement("div");
-        container.id = "bgShapes";
-        container.className = "bg-shapes";
-        document.body.prepend(container);
-    }
+    if (!container) return;
 
     const shapeTypes = ["square", "circle", "triangle", "diamond"];
-    const totalShapes = 20; // Ekranda süzüləcək toplam obyekt sayı
+    const totalShapes = 20; // Düşəcək obyekt sayı
 
     for (let i = 0; i < totalShapes; i++) {
         const shape = document.createElement("div");
@@ -38,21 +32,15 @@ function createGeometricShapes() {
         
         shape.classList.add("shape", randomType);
 
-        // Təsadüfi ölçü (20px - 60px)
         const size = Math.floor(Math.random() * 40) + 20;
         if (randomType !== "triangle") {
             shape.style.width = `${size}px`;
             shape.style.height = `${size}px`;
         }
 
-        // Təsadüfi üfüqi mövqe (%0 - %100)
         shape.style.left = `${Math.random() * 100}%`;
-
-        // Təsadüfi düşmə sürəti (6s - 18s)
         const duration = Math.random() * 12 + 6;
         shape.style.animationDuration = `${duration}s`;
-
-        // Təsadüfi başlanğıc gecikməsi (0s - 10s)
         const delay = Math.random() * 10;
         shape.style.animationDelay = `${delay}s`;
 
@@ -85,11 +73,21 @@ function updatePreview() {
 
     if (!htmlCode || !cssCode || !previewFrame) return;
 
-    const html = htmlCode.value;
-    const css = `<style>${cssCode.value}</style>`;
-    const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+    const htmlValue = htmlCode.value;
+    const cssValue = cssCode.value;
 
+    const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
     previewDoc.open();
-    previewDoc.write(html + css);
+    previewDoc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>${cssValue}</style>
+        </head>
+        <body>
+            ${htmlValue}
+        </body>
+        </html>
+    `);
     previewDoc.close();
 }
