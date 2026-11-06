@@ -15,11 +15,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", function () {
-    initPhysicsLogos();
+    createFallingLogos();
 
     const currentUser = localStorage.getItem("currentUser");
     const userDisplay = document.getElementById("user-display");
-    
     if (currentUser && userDisplay) {
         userDisplay.textContent = currentUser;
     }
@@ -44,11 +43,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const errorMsg = document.getElementById("error-msg");
 
             if (!userInput || !passInput) {
-                if (errorMsg) errorMsg.textContent = "Zəhmət olmasa bütün xanaları doldurun!";
+                errorMsg.textContent = "Zəhmət olmasa bütün xanaları doldurun!";
                 return;
             }
 
-            if (errorMsg) errorMsg.textContent = "Yoxlanılır...";
+            errorMsg.textContent = "Yoxlanılır...";
             const formattedEmail = `${userInput}@nework.edu`;
 
             signInWithEmailAndPassword(auth, formattedEmail, passInput)
@@ -56,37 +55,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     localStorage.setItem("currentUser", userInput);
                     window.location.href = "second.html";
                 })
-                .catch((error) => {
-                    console.error("Firebase Hatası:", error);
-                    if (errorMsg) errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
+                .catch(() => {
+                    errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
                 });
         });
     }
 });
 
-function initPhysicsLogos() {
-    const container = document.getElementById("bgShapes");
-    if (!container || typeof Matter === "undefined") return;
-
-    const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events } = Matter;
-
-    const engine = Engine.create();
-    engine.world.gravity.y = 0.4; 
-
-    const render = Render.create({
-        element: container,
-        engine: engine,
-        options: {
-            width: window.innerWidth,
-            height: window.innerHeight,
-            wireframes: false,
-            background: 'transparent'
-        }
-    });
-
-    Render.run(render);
-    const runner = Runner.create();
-    Runner.run(runner, engine);
+function createFallingLogos() {
+    let container = document.getElementById("bgShapes");
+    if (!container) return;
 
     const logoFiles = [
         "logos/APlus.svg", "logos/CSharp.svg", "logos/Erlang.svg", "logos/Fortran.svg",
@@ -98,52 +76,27 @@ function initPhysicsLogos() {
         "logos/Oxygene.png", "logos/Pyret.png", "logos/Rust.png", "logos/OCKER2.png"
     ];
 
-    function dropLogo() {
-        const x = Math.random() * window.innerWidth;
-        const size = Math.floor(Math.random() * 30) + 30;
+    const totalLogos = 20;
+
+    for (let i = 0; i < totalLogos; i++) {
+        const item = document.createElement("div");
+        item.classList.add("falling-logo");
+
         const randomLogo = logoFiles[Math.floor(Math.random() * logoFiles.length)];
+        const img = document.createElement("img");
+        img.src = randomLogo;
+        
+        item.appendChild(img);
 
-        const logoBody = Bodies.circle(x, -50, size / 2, {
-            restitution: 0.6,
-            friction: 0.1,
-            render: {
-                sprite: {
-                    texture: randomLogo,
-                    xScale: size / 100,
-                    yScale: size / 100
-                }
-            }
-        });
+        item.style.left = `${Math.random() * 95}%`;
+        const duration = Math.random() * 10 + 6;
+        const delay = Math.random() * 8;
 
-        Composite.add(engine.world, logoBody);
+        item.style.animationDuration = `${duration}s`;
+        item.style.animationDelay = `${delay}s`;
+
+        container.appendChild(item);
     }
-
-    setInterval(dropLogo, 800);
-
-    Events.on(engine, "afterUpdate", function () {
-        const bodies = Composite.allBodies(engine.world);
-        bodies.forEach(body => {
-            if (!body.isStatic && body.position.y > window.innerHeight + 100) {
-                Composite.remove(engine.world, body);
-            }
-        });
-    });
-
-    const mouse = Mouse.create(render.canvas);
-    const mouseConstraint = MouseConstraint.create(engine, {
-        mouse: mouse,
-        constraint: {
-            stiffness: 0.2,
-            render: { visible: false }
-        }
-    });
-
-    Composite.add(engine.world, mouseConstraint);
-
-    window.addEventListener("resize", () => {
-        render.canvas.width = window.innerWidth;
-        render.canvas.height = window.innerHeight;
-    });
 }
 
 window.logout = function() {
@@ -159,7 +112,7 @@ window.openFullscreen = function(iframeId) {
         iframe.requestFullscreen();
     } else if (iframe.webkitRequestFullscreen) {
         iframe.webkitRequestFullscreen();
-    } else if (iframe.msRequestFullscreen) { 
+    } else if (iframe.msRequestFullscreen) {
         iframe.msRequestFullscreen();
     }
 };
@@ -179,12 +132,8 @@ function updatePreview() {
     previewDoc.write(`
         <!DOCTYPE html>
         <html>
-        <head>
-            <style>${cssValue}</style>
-        </head>
-        <body>
-            ${htmlValue}
-        </body>
+        <head><style>${cssValue}</style></head>
+        <body>${htmlValue}</body>
         </html>
     `);
     previewDoc.close();
