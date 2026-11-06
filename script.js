@@ -35,19 +35,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const loginBtn = document.getElementById("login-btn");
     if (loginBtn) {
-        localStorage.removeItem("currentUser");
-
         loginBtn.addEventListener("click", () => {
             const userInput = document.getElementById("username").value.trim();
             const passInput = document.getElementById("password").value.trim();
             const errorMsg = document.getElementById("error-msg");
 
             if (!userInput || !passInput) {
-                errorMsg.textContent = "Zəhmət olmasa bütün xanaları doldurun!";
+                if (errorMsg) errorMsg.textContent = "Zəhmət olmasa bütün xanaları doldurun!";
                 return;
             }
 
-            errorMsg.textContent = "Yoxlanılır...";
+            if (errorMsg) errorMsg.textContent = "Yoxlanılır...";
             const formattedEmail = `${userInput}@nework.edu`;
 
             signInWithEmailAndPassword(auth, formattedEmail, passInput)
@@ -55,15 +53,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     localStorage.setItem("currentUser", userInput);
                     window.location.href = "second.html";
                 })
-                .catch(() => {
-                    errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
+                .catch((error) => {
+                    console.error("Firebase Hatası:", error);
+                    if (errorMsg) errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
                 });
         });
     }
 });
 
+// Arka planda süzülen logolar
 function createFallingLogos() {
-    let container = document.getElementById("bgShapes");
+    const container = document.getElementById("bgShapes");
     if (!container) return;
 
     const logoFiles = [
@@ -76,65 +76,24 @@ function createFallingLogos() {
         "logos/Oxygene.png", "logos/Pyret.png", "logos/Rust.png", "logos/OCKER2.png"
     ];
 
-    const totalLogos = 20;
+    const totalLogos = 25;
 
     for (let i = 0; i < totalLogos; i++) {
         const item = document.createElement("div");
-        item.classList.add("falling-logo");
+        item.className = "falling-logo";
 
         const randomLogo = logoFiles[Math.floor(Math.random() * logoFiles.length)];
         const img = document.createElement("img");
         img.src = randomLogo;
+        img.onerror = function() {
+            this.style.display = "none";
+        };
         
         item.appendChild(img);
 
         item.style.left = `${Math.random() * 95}%`;
-        const duration = Math.random() * 10 + 6;
-        const delay = Math.random() * 8;
+        const duration = Math.random() * 8 + 6;
+        const delay = Math.random() * 5;
 
         item.style.animationDuration = `${duration}s`;
-        item.style.animationDelay = `${delay}s`;
-
-        container.appendChild(item);
-    }
-}
-
-window.logout = function() {
-    localStorage.removeItem("currentUser");
-    window.location.href = "index.html";
-};
-
-window.openFullscreen = function(iframeId) {
-    const iframe = document.getElementById(iframeId);
-    if (!iframe) return;
-
-    if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-    } else if (iframe.webkitRequestFullscreen) {
-        iframe.webkitRequestFullscreen();
-    } else if (iframe.msRequestFullscreen) {
-        iframe.msRequestFullscreen();
-    }
-};
-
-function updatePreview() {
-    const htmlCode = document.getElementById("html-code");
-    const cssCode = document.getElementById("css-code");
-    const previewFrame = document.getElementById("live-preview");
-
-    if (!htmlCode || !cssCode || !previewFrame) return;
-
-    const htmlValue = htmlCode.value;
-    const cssValue = cssCode.value;
-
-    const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
-    previewDoc.open();
-    previewDoc.write(`
-        <!DOCTYPE html>
-        <html>
-        <head><style>${cssValue}</style></head>
-        <body>${htmlValue}</body>
-        </html>
-    `);
-    previewDoc.close();
-}
+        item.style.animationDelay
