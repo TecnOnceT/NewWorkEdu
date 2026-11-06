@@ -11,32 +11,37 @@ const firebaseConfig = {
   measurementId: "G-RKRB3JEJ4G"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Firebase tətbiqini təhlükəsiz başlatma
+let auth = null;
+try {
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+} catch (e) {
+    console.error("Firebase xətası:", e);
+}
 
 document.addEventListener("DOMContentLoaded", function () {
-    // 1. Arka plan logolarını başlat
+    // 1. Arxa plan loqolarını hər iki səhifədə işə sal
     createFallingLogos();
 
-    // 2. Kullanıcı adını göster (second.html için)
+    // 2. İstifadəçi adını yoxla və göstər (second.html üçün)
     const currentUser = localStorage.getItem("currentUser");
     const userDisplay = document.getElementById("user-display");
     if (currentUser && userDisplay) {
         userDisplay.textContent = currentUser;
     }
 
-    // 3. Kod önizlemeyi çalıştır (second.html için)
-    updatePreview();
-
+    // 3. Canlı kod önizləməsini işə sal (second.html üçün)
     const htmlCode = document.getElementById("html-code");
     const cssCode = document.getElementById("css-code");
 
     if (htmlCode && cssCode) {
+        updatePreview();
         htmlCode.addEventListener("input", updatePreview);
         cssCode.addEventListener("input", updatePreview);
     }
 
-    // 4. Firebase Login İşlemi (index.html için)
+    // 4. Giriş düyməsi işləmi (index.html üçün)
     const loginBtn = document.getElementById("login-btn");
     if (loginBtn) {
         loginBtn.addEventListener("click", () => {
@@ -52,20 +57,25 @@ document.addEventListener("DOMContentLoaded", function () {
             if (errorMsg) errorMsg.textContent = "Yoxlanılır...";
             const formattedEmail = `${userInput}@nework.edu`;
 
+            if (!auth) {
+                if (errorMsg) errorMsg.textContent = "Firebase bağlantı xətası!";
+                return;
+            }
+
             signInWithEmailAndPassword(auth, formattedEmail, passInput)
                 .then(() => {
                     localStorage.setItem("currentUser", userInput);
                     window.location.href = "second.html";
                 })
                 .catch((error) => {
-                    console.error("Firebase Hatası:", error);
+                    console.error("Giriş xətası:", error);
                     if (errorMsg) errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
                 });
         });
     }
 });
 
-// Arka planda süzülen sabit boyutlu logolar
+// Arxa planda nizamlı və sabit ölçülü loqoların süzülməsi
 function createFallingLogos() {
     const container = document.getElementById("bgShapes");
     if (!container) return;
@@ -80,7 +90,7 @@ function createFallingLogos() {
         "logos/Oxygene.png", "logos/Pyret.png", "logos/Rust.png", "logos/OCKER2.png"
     ];
 
-    const totalLogos = 25;
+    const totalLogos = 20;
 
     for (let i = 0; i < totalLogos; i++) {
         const item = document.createElement("div");
@@ -90,6 +100,11 @@ function createFallingLogos() {
         const img = document.createElement("img");
         img.src = randomLogo;
         
+        // Şəkil tapılmasa xəta verməsin deyə gizlədirik
+        img.onerror = function() {
+            item.style.display = "none";
+        };
+
         item.appendChild(img);
 
         item.style.left = `${Math.random() * 95}%`;
@@ -103,6 +118,7 @@ function createFallingLogos() {
     }
 }
 
+// Qlobal funksiyalar (HTML daxilindən onclick ilə çağrılması üçün)
 window.logout = function() {
     localStorage.removeItem("currentUser");
     window.location.href = "index.html";
