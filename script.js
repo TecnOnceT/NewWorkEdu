@@ -43,8 +43,34 @@ function initPhysicsLogos() {
     Runner.run(runner, engine);
 
     const logoFiles = [
-        "logos/logo1.svg",
-        "logos/logo2.png",
+        "logos/APlus.svg",
+        "logos/CSharp.svg",
+        "logos/Erlang.svg",
+        "logos/Fortran.svg",
+        "logos/FStar.svg",
+        "logos/Haskell.svg",
+        "logos/Java.svg",
+        "logos/Julia.svg",
+        "logos/Kotlin.svg",
+        "logos/Lua.svg",
+        "logos/Mathics.svg",
+        "logos/Oberon.svg",
+        "logos/Perl.svg",
+        "logos/PHP.svg",
+        "logos/Python.svg",
+        "logos/QB64.svg",
+        "logos/Racket.svg",
+        "logos/Rust.svg",
+        "logos/Wax.svg",
+        "logos/WebAssembly.svg",
+        "logos/1.png",
+        "logos/CPP.png",
+        "logos/Delphi.png",
+        "logos/JS.png",
+        "logos/Oxygene.png",
+        "logos/Pyret.png",
+        "logos/Rust.png",
+
         "logos/OCKER2.png"
     ];
 
