@@ -2,13 +2,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDzfpUCfUJd4VNR_UfrR3BhQ8ZCV5jZsP8",
-  authDomain: "neworkaccountprojet.firebaseapp.com",
-  projectId: "neworkaccountprojet",
-  storageBucket: "neworkaccountprojet.firebasestorage.app",
-  messagingSenderId: "962982050109",
-  appId: "1:962982050109:web:6886bb8c095a6f28a16d54",
-  measurementId: "G-RKRB3JEJ4G"
+    apiKey: "AIzaSyDzfpUCfUJd4VNR_UfrR3BhQ8ZCV5jZsP8",
+    authDomain: "neworkaccountprojet.firebaseapp.com",
+    projectId: "neworkaccountprojet",
+    storageBucket: "neworkaccountprojet.firebasestorage.app",
+    messagingSenderId: "962982050109",
+    appId: "1:962982050109:web:6886bb8c095a6f28a16d54",
+    measurementId: "G-RKRB3JEJ4G"
 };
 
 // Firebase tətbiqini təhlükəsiz başlatma
@@ -21,7 +21,7 @@ try {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    // 1. Arxa plan loqolarını hər iki səhifədə işə sal
+    // 1. Arxa plan loqolarını işə sal
     createFallingLogos();
 
     // 2. İstifadəçi adını yoxla və göstər (second.html üçün)
@@ -68,8 +68,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     window.location.href = "second.html";
                 })
                 .catch((error) => {
-                    console.error("Giriş xətası:", error);
-                    if (errorMsg) errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır!";
+                    console.error("Giriş xətası detallı:", error.code, error.message);
+                    if (errorMsg) {
+                        errorMsg.textContent = "İstifadəçi adı və ya şifrə yanlışdır! (" + error.message + ")";
+                    }
                 });
         });
     }
@@ -100,7 +102,6 @@ function createFallingLogos() {
         const img = document.createElement("img");
         img.src = randomLogo;
         
-        // Şəkil tapılmasa xəta verməsin deyə gizlədirik
         img.onerror = function() {
             item.style.display = "none";
         };
@@ -118,7 +119,6 @@ function createFallingLogos() {
     }
 }
 
-// Qlobal funksiyalar (HTML daxilindən onclick ilə çağrılması üçün)
 window.logout = function() {
     localStorage.removeItem("currentUser");
     window.location.href = "index.html";
