@@ -76,7 +76,7 @@ function initPhysicsLogos() {
 
     function dropLogo() {
         const x = Math.random() * window.innerWidth;
-        const size = Math.floor(Math.random() * 30) + 30; // 30px - 60px arası boyut
+        const size = Math.floor(Math.random() * 30) + 30;
         const randomLogo = logoFiles[Math.floor(Math.random() * logoFiles.length)];
 
         const logoBody = Bodies.circle(x, -50, size / 2, {
@@ -113,7 +113,6 @@ function initPhysicsLogos() {
 
     Composite.add(engine.world, mouseConstraint);
 
-    // Pencere boyutu değiştiğinde çizim alanını güncelle
     window.addEventListener("resize", () => {
         render.canvas.width = window.innerWidth;
         render.canvas.height = window.innerHeight;
