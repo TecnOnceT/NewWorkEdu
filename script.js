@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    createGeometricShapes();
+    initPhysicsLogos();
 
     const currentUser = localStorage.getItem("currentUser");
     const userDisplay = document.getElementById("user-display");
@@ -19,33 +19,79 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-function createGeometricShapes() {
-    let container = document.getElementById("bgShapes");
-    if (!container) return;
+function initPhysicsLogos() {
+    const container = document.getElementById("bgShapes");
+    if (!container || typeof Matter === "undefined") return;
 
-    const shapeTypes = ["square", "circle", "triangle", "diamond"];
-    const totalShapes = 20; // Düşəcək obyekt sayı
+    const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events } = Matter;
 
-    for (let i = 0; i < totalShapes; i++) {
-        const shape = document.createElement("div");
-        const randomType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
-        
-        shape.classList.add("shape", randomType);
-
-        const size = Math.floor(Math.random() * 40) + 20;
-        if (randomType !== "triangle") {
-            shape.style.width = `${size}px`;
-            shape.style.height = `${size}px`;
+    const engine = Engine.create();
+    engine.world.gravity.y = 0.4; 
+    const render = Render.create({
+        element: container,
+        engine: engine,
+        options: {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            wireframes: false,
+            background: 'transparent'
         }
+    });
 
-        shape.style.left = `${Math.random() * 100}%`;
-        const duration = Math.random() * 12 + 6;
-        shape.style.animationDuration = `${duration}s`;
-        const delay = Math.random() * 10;
-        shape.style.animationDelay = `${delay}s`;
+    Render.run(render);
+    const runner = Runner.create();
+    Runner.run(runner, engine);
 
-        container.appendChild(shape);
+    const logoFiles = [
+        "logos/logo1.svg",
+        "logos/logo2.png",
+        "logos/OCKER2.png"
+    ];
+
+    function dropLogo() {
+        const x = Math.random() * window.innerWidth;
+        const size = Math.floor(Math.random() * 30) + 30; // 30px - 60px arası boyut
+        const randomLogo = logoFiles[Math.floor(Math.random() * logoFiles.length)];
+
+        const logoBody = Bodies.circle(x, -50, size / 2, {
+            restitution: 0.6,
+            friction: 0.1,
+            render: {
+                sprite: {
+                    texture: randomLogo,
+                    xScale: size / 100,
+                    yScale: size / 100
+                }
+            }
+        });
+
+        Composite.add(engine.world, logoBody);
+
+        Events.on(engine, "afterUpdate", function () {
+            if (logoBody.position.y > window.innerHeight + 100) {
+                Composite.remove(engine.world, logoBody);
+            }
+        });
     }
+
+    setInterval(dropLogo, 800);
+
+    const mouse = Mouse.create(document.body);
+    const mouseConstraint = MouseConstraint.create(engine, {
+        mouse: mouse,
+        constraint: {
+            stiffness: 0.2,
+            render: { visible: false }
+        }
+    });
+
+    Composite.add(engine.world, mouseConstraint);
+
+    // Pencere boyutu değiştiğinde çizim alanını güncelle
+    window.addEventListener("resize", () => {
+        render.canvas.width = window.innerWidth;
+        render.canvas.height = window.innerHeight;
+    });
 }
 
 function logout() {
