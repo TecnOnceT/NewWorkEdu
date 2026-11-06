@@ -89,7 +89,7 @@ function createFallingLogos() {
     const totalLogos = 20;
 
     for (let i = 0; i < totalLogos; i++) {
-        const  = document.createElement("div");
+        const item = document.createElement("div");
         .className = "falling-logo";
 
         const randomLogo = logoFiles[Math.floor(Math.random() * logoFiles.length)];
