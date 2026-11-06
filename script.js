@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
+    createGeometricShapes();
+
     const currentUser = localStorage.getItem("currentUser");
     const userDisplay = document.getElementById("user-display");
     
     if (currentUser && userDisplay) {
         userDisplay.textContent = currentUser;
     }
-
-    createGeometricShapes();
 
     updatePreview();
 
@@ -30,7 +30,7 @@ function createGeometricShapes() {
     }
 
     const shapeTypes = ["square", "circle", "triangle", "diamond"];
-    const totalShapes = 200; 
+    const totalShapes = 20; // Ekranda süzüləcək toplam obyekt sayı
 
     for (let i = 0; i < totalShapes; i++) {
         const shape = document.createElement("div");
@@ -38,17 +38,21 @@ function createGeometricShapes() {
         
         shape.classList.add("shape", randomType);
 
+        // Təsadüfi ölçü (20px - 60px)
         const size = Math.floor(Math.random() * 40) + 20;
         if (randomType !== "triangle") {
             shape.style.width = `${size}px`;
             shape.style.height = `${size}px`;
         }
 
+        // Təsadüfi üfüqi mövqe (%0 - %100)
         shape.style.left = `${Math.random() * 100}%`;
 
+        // Təsadüfi düşmə sürəti (6s - 18s)
         const duration = Math.random() * 12 + 6;
         shape.style.animationDuration = `${duration}s`;
 
+        // Təsadüfi başlanğıc gecikməsi (0s - 10s)
         const delay = Math.random() * 10;
         shape.style.animationDelay = `${delay}s`;
 
