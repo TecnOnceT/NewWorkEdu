@@ -19,17 +19,44 @@ body {
     overflow-x: hidden;
 }
 
-#bgShapes {
+.bg-shapes {
     position: fixed;
     inset: 0;
     z-index: 0;
+    overflow: hidden;
     pointer-events: none;
 }
 
-#bgShapes canvas {
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
+.falling-logo {
+    position: absolute;
+    top: -60px;
+    width: 38px;  
+    height: 38px;
+    animation: fallAndSpin linear infinite;
+    opacity: 0.65;
+}
+
+.falling-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+@keyframes fallAndSpin {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.65;
+    }
+    90% {
+        opacity: 0.65;
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 .bg-grid {
@@ -41,28 +68,10 @@ body {
     pointer-events: none;
 }
 
-.logo-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.logo-text {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    background: linear-gradient(to right, #ffffff, #fca5a5);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
 .logo-img {
-    width: 45px;
-    height: 45px;
+    width: 120px;
+    height: auto;
     object-fit: contain;
-    will-change: filter, opacity;
     animation: glowPulse 2.5s ease-in-out infinite alternate;
 }
 
@@ -82,7 +91,6 @@ body {
     z-index: 1;
     background: rgba(24, 10, 10, 0.85);
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     padding: 40px 32px;
     border-radius: 20px;
     width: 100%;
@@ -127,7 +135,6 @@ body {
 .input-group input:focus {
     border-color: #ef4444;
     box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
-    background: rgba(0, 0, 0, 0.6);
 }
 
 .error-msg {
@@ -151,11 +158,27 @@ header {
     align-items: center;
     background: rgba(24, 10, 10, 0.85);
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     padding: 20px 28px;
     border-radius: 16px;
     margin-bottom: 30px;
     border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(to right, #ffffff, #fca5a5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .courses-grid {
@@ -168,18 +191,10 @@ header {
 .course-card {
     background: rgba(24, 10, 10, 0.75);
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     padding: 28px;
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
     width: 100%;
-}
-
-.course-card:hover {
-    transform: translateY(-4px);
-    border-color: #f87171;
-    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.25);
 }
 
 .course-card h3 {
@@ -215,25 +230,8 @@ header {
     margin-top: 10px;
 }
 
-.btn-group .btn-primary {
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-download {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    text-align: center;
-}
-
 .btn-primary {
-    width: 100%;
+    flex: 1;
     padding: 13px;
     background: linear-gradient(135deg, #ef4444, #dc2626);
     border: none;
@@ -242,6 +240,11 @@ header {
     border-radius: 10px;
     cursor: pointer;
     font-size: 15px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
 }
@@ -249,7 +252,6 @@ header {
 .btn-primary:hover {
     background: linear-gradient(135deg, #f87171, #ef4444);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
 }
 
 .btn-danger {
@@ -265,7 +267,6 @@ header {
 
 .btn-danger:hover {
     background: #ef4444;
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
 }
 
 .editor-title {
@@ -276,36 +277,24 @@ header {
 
 .editor-container {
     display: flex;
-    flex-direction: row;
     gap: 20px;
     background: rgba(24, 10, 10, 0.85);
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     padding: 24px;
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.15);
     width: 100%;
-    box-sizing: border-box;
 }
 
 .editor-column, .preview-column {
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 16px;
     min-width: 0;
 }
 
-.editor-column {
-    gap: 16px;
-}
-
-.code-box {
-    display: flex;
-    flex-direction: column;
-}
-
-.editor-container label, 
-.preview-column label {
+.editor-container label, .preview-column label {
     color: #fca5a5;
     font-size: 14px;
     font-weight: 600;
@@ -316,21 +305,15 @@ header {
 .editor-container textarea {
     width: 100%;
     height: 140px;
-    background: rgba(0, 0, 0, 0.6) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    color: #86efac !important;
-    font-family: 'Consolas', 'Courier New', monospace;
+    color: #86efac;
+    font-family: 'Consolas', monospace;
     font-size: 13px;
     padding: 12px;
     outline: none;
     resize: vertical;
-    box-sizing: border-box;
-}
-
-.editor-container textarea:focus {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
 }
 
 .preview-column iframe {
@@ -339,22 +322,10 @@ header {
     background: #ffffff;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
-    header {
+    header, .editor-container, .btn-group {
         flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    .editor-container {
-        flex-direction: column;
-    }
-    .btn-group {
-        flex-direction: column;
-    }
-    .pdf-viewer-container {
-        height: 400px;
     }
 }
