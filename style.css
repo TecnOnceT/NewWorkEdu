@@ -29,7 +29,7 @@ body {
 
 .falling-logo {
     position: absolute;
-    top: -60px;
+    top: -160px;
     width: 72px;  /* Loqonun ölçüsünü bir az böyüттük (64px -> 72px) */
     height: 72px;
     animation: fallAndSpin linear infinite;
@@ -56,7 +56,7 @@ body {
         opacity: 0.9; /* Ekranda qalma müddətində parlaq qalsın */
     }
     100% {
-        transform: translateY(110vh) rotate(360deg);
+        transform: translateY(120vh) rotate(360deg);
         opacity: 0;
     }
 }
