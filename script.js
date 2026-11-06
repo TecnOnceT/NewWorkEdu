@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
         userDisplay.textContent = currentUser;
     }
 
+    createGeometricShapes();
+
     updatePreview();
 
     const htmlCode = document.getElementById("html-code");
@@ -16,6 +18,42 @@ document.addEventListener("DOMContentLoaded", function () {
         cssCode.addEventListener("input", updatePreview);
     }
 });
+
+function createGeometricShapes() {
+    let container = document.getElementById("bgShapes");
+    
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "bgShapes";
+        container.className = "bg-shapes";
+        document.body.prepend(container);
+    }
+
+    const shapeTypes = ["square", "circle", "triangle", "diamond"];
+    const totalShapes = 25; 
+    for (let i = 0; i < totalShapes; i++) {
+        const shape = document.createElement("div");
+        const randomType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+        
+        shape.classList.add("shape", randomType);
+
+        const size = Math.floor(Math.random() * 40) + 20;
+        if (randomType !== "triangle") {
+            shape.style.width = `${size}px`;
+            shape.style.height = `${size}px`;
+        }
+
+        shape.style.left = `${Math.random() * 100}%`;
+
+        const duration = Math.random() * 12 + 6;
+        shape.style.animationDuration = `${duration}s`;
+
+        const delay = Math.random() * 10;
+        shape.style.animationDelay = `${delay}s`;
+
+        container.appendChild(shape);
+    }
+}
 
 function logout() {
     localStorage.removeItem("currentUser");
