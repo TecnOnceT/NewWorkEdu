@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             signInWithEmailAndPassword(auth, formattedEmail, passInput)
                 .then(() => {
-                    localStorage.set("currentUser", userInput);
+                    localStorage.setItem("currentUser", userInput);
                     window.location.href = "second.html";
                 })
                 .catch((error) => {
